@@ -38,8 +38,6 @@ public class AccountingController {
 	
 	@Autowired
     private GlDetailService glDetailService;
-
-	
     @Autowired
     private ModelMapper modelMapper;
     
@@ -54,6 +52,9 @@ public class AccountingController {
             errorResponse.setCode("bad.request");
             return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
         }
+        
+        
+        
         int effectRows = glCodeService.insertGlCode(glCodeVo);
         // insert Row 없음
         if(effectRows==1){
