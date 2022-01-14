@@ -39,6 +39,7 @@ public class AccountingController {
 	@Autowired
     private GlDetailService glDetailService;
 
+	
     @Autowired
     private ModelMapper modelMapper;
     
