@@ -1,0 +1,105 @@
+/** **/
+.scroll{
+  overflow:scroll;
+}
+      
+/** DATAGRID **/
+.datagrid-header-row,
+.datagrid-row {
+  height: 27px;
+}
+
+.datagrid-cell,
+.datagrid-cell-group,
+.datagrid-header-rownumber,
+.datagrid-cell-rownumber {
+  margin: 0;
+  padding: 0 4px;
+  white-space: nowrap;
+  word-wrap: normal;
+  overflow: hidden;
+  height: 18px;
+  line-height: 18px;
+  font-size: 11px;
+}
+
+/** TEXTBOX **/
+.textbox {
+  position: relative;
+  border: 1px solid #D3D3D3;
+  background-color: #fff;
+  vertical-align: middle;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 0 0 3px;							/* TEXTBOX 의 LABEL 과 INPUT BOX 와의 거리  */
+  padding: 0;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.textbox .textbox-text {
+  font-size: 12px;
+  border: 0;
+  margin: 0;
+  padding: 0 4px;
+  white-space: normal;
+  vertical-align: top;
+  outline-style: none;
+  resize: none;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+  height: 22px;									/* INPUT BOX 의 크기 조절*/
+  line-height: 18px;
+}
+
+.textbox-label {
+  display: inline-block;
+  width: 80px;
+  height: 30px;
+  line-height: 30px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0px;
+  padding-right: 7px;
+  background-color: #ccddff;					/*  TEXTBOX 의 LABEL 의 백그라운드   */
+}
+
+.my-textbox1 {
+	display: inline-block;
+	text-align: right;
+	width: 130px;
+	height: 24px;
+	line-height: 24px;
+	vertical-align: middle;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin: 0px;
+	padding-right: 7px;
+	background-color: #ccddff;
+}
+
+/** LINKBUTTON **/
+.l-btn-text {
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+  line-height: 24px;
+  font-size: 11px;
+  padding: 0;
+  margin: 0 6px;
+}
+
+/** COMBOBOX **/
+.combobox-item,
+.combobox-group,
+.combobox-stick {
+  font-size: 12px;
+  padding: 4px 4px;
+  line-height: 16px;
+  height: 'auto';
+}

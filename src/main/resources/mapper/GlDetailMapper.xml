@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.accounting.GlDetailMapper">
+    <select id="findOneGlDetail" parameterType="java.util.Map"  resultType="GlDetailVo">
+       select 
+			gldetail0_.actg_tr_dt AS actgTrDt,
+			gldetail0_.actg_tr_srno AS actgTrSrno,
+			gldetail0_.actg_tr_sub_srno AS actgTrSubSrno,
+			gldetail0_.acct_cd AS acctCd,
+			gldetail0_.bank_cd AS bankCd,
+			gldetail0_.basic_rate AS basicRate,
+			gldetail0_.brno AS brno,
+			gldetail0_.crdr_tcd AS crdrTcd,
+			gldetail0_.curr_cd AS currCd,
+			gldetail0_.exr_rate AS exrRate,
+			gldetail0_.frc AS frc,
+			gldetail0_.opp_brno AS oppBrno,
+			gldetail0_.posi_yn AS posiYn,
+			gldetail0_.row_no AS rowNo,
+			gldetail0_.won AS won
+		FROM
+			ac_frc_gl_detail gldetail0_
+		WHERE 1=1
+			AND gldetail0_.actg_tr_dt = #{actgTrDt}
+			AND gldetail0_.actg_tr_srno = #{actgTrSrno}
+			AND gldetail0_.actg_tr_sub_srno = #{actgTrSubSrno}
+	</select>
+    <select id="findByActgTrDtAndActgTrSrnoOrderByActgTrSubSrnoAsc" parameterType="java.util.Map"  resultType="GlDetailVo">
+       select 
+			gldetail0_.actg_tr_dt AS actgTrDt,
+			gldetail0_.actg_tr_srno AS actgTrSrno,
+			gldetail0_.actg_tr_sub_srno AS actgTrSubSrno,
+			gldetail0_.acct_cd AS acctCd,
+			gldetail0_.bank_cd AS bankCd,
+			gldetail0_.basic_rate AS basicRate,
+			gldetail0_.brno AS brno,
+			gldetail0_.crdr_tcd AS crdrTcd,
+			gldetail0_.curr_cd AS currCd,
+			gldetail0_.exr_rate AS exrRate,
+			gldetail0_.frc AS frc,
+			gldetail0_.opp_brno AS oppBrno,
+			gldetail0_.posi_yn AS posiYn,
+			gldetail0_.row_no AS rowNo,
+			gldetail0_.won AS won
+		FROM
+			ac_frc_gl_detail gldetail0_
+		WHERE 1=1
+			AND gldetail0_.actg_tr_dt = #{actgTrDt}
+			AND gldetail0_.actg_tr_srno = #{actgTrSrno}
+		order by gldetail0_.actg_tr_sub_srno ASC 
+	</select>
+		
+	<insert id="saveGlDetail" >
+		MERGE INTO ac_frc_gl_detail 
+            USING dual
+              ON (actg_tr_dt = #{actgTrDt} and  actg_tr_srno = #{actgTrSrno} and  actg_tr_sub_srno = #{actgTrSubSrno})   <!--  중복조건 --> 
+		    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+	        UPDATE SET 
+				acct_cd= #{acctCd},
+				bank_cd= #{bankCd},
+				basic_rate= #{basicRate},
+				brno= #{brno},
+				crdr_tcd= #{crdrTcd},
+				curr_cd= #{currCd},
+				exr_rate= #{exrRate},
+				frc= #{frc},
+				opp_brno= #{oppBrno},
+				posi_yn= #{posiYn},
+				row_no= #{rowNo},
+				won= #{won}
+		    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+		    insert ( 
+					actg_tr_dt,
+					actg_tr_srno,
+					actg_tr_sub_srno,
+					acct_cd,
+					bank_cd,
+					basic_rate,
+					brno,
+					crdr_tcd,
+					curr_cd,
+					exr_rate,
+					frc,
+					opp_brno,
+					posi_yn,
+					row_no,
+					won
+		        )
+		        VALUES(
+		             #{actgTrDt},
+		             #{actgTrSrno},
+		             #{actgTrSubSrno},
+		             #{acctCd},
+		             #{bankCd},
+		             #{basicRate},
+		             #{brno},
+		             #{crdrTcd},
+		             #{currCd},
+		             #{exrRate},
+		             #{frc},
+		             #{oppBrno},
+		             #{posiYn},
+		             #{rowNo},
+		             #{won}
+			    )
+     </insert>
+</mapper>

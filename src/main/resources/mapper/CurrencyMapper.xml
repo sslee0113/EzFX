@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.CurrencyMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListCurrency" parameterType="java.util.Map"  resultType="CurrencyVo">
+			 select
+			        currency_.curr_code currCode,
+					currency_.eng_name as engName,
+					currency_.kor_name as korName,
+					currency_.quot_flag as quotFlag,
+					currency_.quot_seq as quotSeq,
+					currency_.curr_unit as currUnit,
+					currency_.undr_point as undrPoint,
+					currency_.tt_sprd_rate as ttSprdRate,
+					currency_.basic_sprd_rate as basicSprdRate,
+					currency_.coin_sprd_rate as coinSprdRate,
+					currency_.sta_cd as staCd,
+					
+					currency_.first_date as firstDate,
+					currency_.first_time as firstTime,
+					currency_.last_date as lastDate,
+					currency_.last_time as lastTime
+			    from
+			        cm_currency_code currency_
+			    where 1 = 1
+			    	and sta_cd = '0'
+				<if test="currCode != null and currCode != ''">
+					and currency_.curr_code like '%'||#{currCode}||'%'
+				</if>	
+		</select>
+		
+		<select id="currCodeList" parameterType="java.util.Map"  resultType="CurrencyVo">
+			 select
+			        currency_.curr_code currCode,
+					currency_.eng_name as engName,
+					currency_.kor_name as korName,
+					currency_.quot_flag as quotFlag,
+					currency_.quot_seq as quotSeq,
+					currency_.curr_unit as currUnit,
+					currency_.undr_point as undrPoint,
+					currency_.tt_sprd_rate as ttSprdRate,
+					currency_.basic_sprd_rate as basicSprdRate,
+					currency_.coin_sprd_rate as coinSprdRate,
+					currency_.sta_cd as staCd,
+					
+					currency_.first_date as firstDate,
+					currency_.first_time as firstTime,
+					currency_.last_date as lastDate,
+					currency_.last_time as lastTime
+			    from
+			        cm_currency_code currency_
+			    where 1 = 1 
+					and currency_.sta_cd = #{staCd}
+					and currency_.quot_flag = #{quotFlag}
+		</select>
+		
+	    <select id="findOneCurrency" parameterType="String"  resultType="CurrencyVo">
+			 select
+			        currency_.curr_code currCode,
+					currency_.eng_name as engName,
+					currency_.kor_name as korName,
+					currency_.quot_flag as quotFlag,
+					currency_.quot_seq as quotSeq,
+					currency_.curr_unit as currUnit,
+					currency_.undr_point as undrPoint,
+					currency_.tt_sprd_rate as ttSprdRate,
+					currency_.basic_sprd_rate as basicSprdRate,
+					currency_.coin_sprd_rate as coinSprdRate,
+					currency_.sta_cd as staCd,
+					
+					currency_.first_date as firstDate,
+					currency_.first_time as firstTime,
+					currency_.last_date as lastDate,
+					currency_.last_time as lastTime
+			    from
+			        cm_currency_code currency_
+			    where 1 = 1
+			    	and currency_.curr_code = #{currCode}
+			</select>
+		
+		<insert id="saveCurrency" >
+			MERGE INTO cm_currency_code 
+	            USING dual 
+	            ON (curr_code = #{currCode})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        eng_name		= #{engName}
+			        ,kor_name		= #{korName}
+			        ,quot_flag		= #{quotFlag}
+			        ,quot_seq		= #{quotSeq}
+			        ,curr_unit		= #{currUnit}
+			        ,undr_point		= #{undrPoint}
+			        ,tt_sprd_rate	= #{ttSprdRate}
+			        ,basic_sprd_rate= #{basicSprdRate}
+			        ,coin_sprd_rate	= #{coinSprdRate}
+			        ,sta_cd			= #{staCd}
+					,first_date		= #{firstDate}
+					,first_time		= #{firstTime}
+					,last_date		= #{lastDate}
+					,last_time		= #{lastTime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+				        curr_code
+				        ,eng_name
+				        ,kor_name
+				        ,quot_flag
+				        ,quot_seq
+				        ,curr_unit
+				        ,undr_point
+				        ,tt_sprd_rate
+				        ,basic_sprd_rate
+				        ,coin_sprd_rate
+				        ,sta_cd
+				        ,first_date
+				        ,first_time
+				        ,last_date
+				        ,last_time
+			        )
+			        VALUES(
+			        #{currCode}
+					,#{engName}
+					,#{korName}
+					,#{quotFlag}
+					,#{quotSeq}
+					,#{currUnit}
+					,#{undrPoint}
+					,#{ttSprdRate}
+					,#{basicSprdRate}
+					,#{coinSprdRate}
+					,#{staCd}
+					,#{firstDate}
+					,#{firstTime}
+					,#{lastDate}
+					,#{lastTime} 
+			        )
+	     </insert>
+</mapper>

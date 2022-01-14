@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.ExchangeMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListExchange" parameterType="java.util.Map"  resultType="ExchangeVo">
+			 select
+			        exchange0_.ref_no as refNo,
+			        exchange0_.alt_wna as altWna,
+			        exchange0_.amty_dscd,
+			        dcode_.dcode_name as amtyDscd,
+			        exchange0_.brno as brno,
+			        exchange0_.cash_wna as cashWna,
+			        exchange0_.cn_amt as cnAmt,
+			        exchange0_.cn_apl_exrt as cnAplExrt,
+			        exchange0_.cn_dln_pl_wna as cnDlnPlWna,
+			        exchange0_.cn_exrt as cnExrt,
+			        exchange0_.cn_stlm_wna as cnStlmWna,
+			        exchange0_.crc_cncl_dt as crcCnclDt,
+			        exchange0_.crc_cncl_nm as crcCnclNm,
+			        exchange0_.crcd as crcd,
+			        exchange0_.cust_nm as custNm,
+			        exchange0_.cust_no as custNo,
+			        exchange0_.efm_amt as efmAmt,
+			        exchange0_.efm_dscd,
+             		dcode2_.dcode_name as efmDscd,
+			        exchange0_.first_date as firstDate,
+			        exchange0_.first_time as firstTime,
+			        dcode3_.dcode_name as frxcLdgrStcd,
+			        exchange0_.frxc_ldgr_stcd,
+              		dcode4_.dcode_name as intdRscd,
+			        exchange0_.intd_rscd,
+			        exchange0_.last_date as lastDate,
+			        exchange0_.last_time as lastTime,
+			        exchange0_.ntnt_ntcd as ntntNtcd,
+			        exchange0_.pmny_amt as pmnyAmt,
+			        exchange0_.pmny_apl_exrt as pmnyAplExrt,
+			        exchange0_.pmny_dln_pl_wna as pmnyDlnPlWna,
+			        exchange0_.pmny_exrt as pmnyExrt,
+			        exchange0_.pmny_stlm_wna as pmnyStlmWna,
+			        exchange0_.prm_rt as prmRt,
+			        exchange0_.psp_no as pspNo,
+			        exchange0_.rcfm_dt as rcfmDt,
+			        exchange0_.rnno as rnno,
+			        exchange0_.rnno_dscd as rnnoDscd,
+			        exchange0_.sum_stlm_wna as sumStlmWna,
+			        exchange0_.tr_dt as trDt,
+              		dcode5_.dcode_name as trMnbdPccd,
+			        exchange0_.tr_mnbd_pccd,
+			        exchange0_.tusa_tnsl_amt as tusaTnslAmt,
+			        exchange0_.us_ntcd as usNtcd,
+			        exchange0_.wn_itrlk_act as wn_itrlkAct,
+			        exchange0_.wn_itrlk_amt as wn_itrlkAmt 
+			    from
+			        rt_exchange_mst exchange0_,
+			        cm_common_dcode dcode_,
+			        cm_common_dcode dcode2_,
+			        cm_common_dcode dcode3_,
+			        cm_common_dcode dcode4_,
+			        cm_common_dcode dcode5_
+			    where 1 = 1
+		            and exchange0_.amty_dscd = dcode_.dcode
+		            and exchange0_.efm_dscd = dcode2_.dcode
+		            and exchange0_.frxc_ldgr_stcd = dcode3_.dcode
+		            and exchange0_.intd_rscd = dcode4_.dcode
+		            and exchange0_.tr_mnbd_pccd = dcode5_.dcode
+		            and dcode_.gcode = 'AMTY_DSCD'
+		            and dcode2_.gcode = 'EFM_DSCD'
+		            and dcode3_.gcode = 'FRXC_LDGR_STCD'
+		            and dcode4_.gcode = 'INTD_RSCD'
+		            and dcode5_.gcode = 'TR_MNBD_PCCD'
+              		
+				<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+					and exchange0_.first_date BETWEEN #{startDate} AND #{endDate}
+				</if>		
+				<if test="brno != null and brno != ''">
+					and exchange0_.brno like '%'||#{brno}||'%'
+				</if>		
+				<if test="efmDscd != null and efmDscd != ''">
+					and exchange0_.efm_dscd = #{efmDscd}
+				</if>		
+				<if test="refNo != null and refNo != ''">
+					and exchange0_.ref_no like '%'||#{refNo}||'%'
+				</if>		
+		</select>
+		
+	    <select id="findOneExchange" parameterType="String"  resultType="ExchangeVo">
+			 select
+			        exchange0_.ref_no as refNo,
+			        exchange0_.alt_wna as altWna,
+			        exchange0_.amty_dscd as amtyDscd,
+			        exchange0_.brno as brno,
+			        exchange0_.cash_wna as cashWna,
+			        exchange0_.cn_amt as cnAmt,
+			        exchange0_.cn_apl_exrt as cnAplExrt,
+			        exchange0_.cn_dln_pl_wna as cnDlnPlWna,
+			        exchange0_.cn_exrt as cnExrt,
+			        exchange0_.cn_stlm_wna as cnStlmWna,
+			        exchange0_.crc_cncl_dt as crcCnclDt,
+			        exchange0_.crc_cncl_nm as crcCnclNm,
+			        exchange0_.crcd as crcd,
+			        exchange0_.cust_nm as custNm,
+			        exchange0_.cust_no as custNo,
+			        exchange0_.efm_amt as efmAmt,
+			        exchange0_.efm_dscd as efmDscd,
+			        exchange0_.first_date as firstDate,
+			        exchange0_.first_time as firstTime,
+			        exchange0_.frxc_ldgr_stcd as frxcLdgrStcd,
+			        exchange0_.intd_rscd as intdRscd,
+			        exchange0_.last_date as lastDate,
+			        exchange0_.last_time as lastTime,
+			        exchange0_.ntnt_ntcd as ntntNtcd,
+			        exchange0_.pmny_amt as pmnyAmt,
+			        exchange0_.pmny_apl_exrt as pmnyAplExrt,
+			        exchange0_.pmny_dln_pl_wna as pmnyDlnPlWna,
+			        exchange0_.pmny_exrt as pmnyExrt,
+			        exchange0_.pmny_stlm_wna as pmnyStlmWna,
+			        exchange0_.prm_rt as prmRt,
+			        exchange0_.psp_no as pspNo,
+			        exchange0_.rcfm_dt as rcfmDt,
+			        exchange0_.rnno as rnno,
+			        exchange0_.rnno_dscd as rnnoDscd,
+			        exchange0_.sum_stlm_wna as sumStlmWna,
+			        exchange0_.tr_dt as trDt,
+			        exchange0_.tr_mnbd_pccd as trMnbdPccd,
+			        exchange0_.tusa_tnsl_amt as tusaTnslAmt,
+			        exchange0_.us_ntcd as usNtcd,
+			        exchange0_.wn_itrlk_act as wn_itrlkAct,
+			        exchange0_.wn_itrlk_amt as wn_itrlkAmt 
+			    from
+			        rt_exchange_mst exchange0_ 
+			    where 1 = 1
+   				    and exchange0_.ref_no = #{refNo}
+		</select>
+		
+		<insert id="saveExchange" parameterType="ExchangeVo" >
+			MERGE INTO rt_exchange_mst 
+	            USING dual 
+	            ON (ref_no = #{refNo})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        rnno = #{rnno},
+			        efm_dscd = #{efmDscd},
+			        tr_dt = #{trDt},
+			        rnno_dscd = #{rnnoDscd},
+			        alt_wna = #{altWna},
+			        amty_dscd = #{amtyDscd},
+			        brno = #{brno},
+			        cash_wna = #{cashWna},
+			        cn_amt = #{cnAmt},
+			        cn_apl_exrt = #{cnAplExrt},
+			        cn_dln_pl_wna = #{cnDlnPlWna},
+			        cn_exrt = #{cnExrt},
+			        cn_stlm_wna = #{cnStlmWna},
+			        crc_cncl_dt = #{crcCnclDt},
+			        crc_cncl_nm = #{crcCnclNm},
+			        crcd = #{crcd},
+			        cust_nm = #{custNm},
+			        cust_no = #{custNo},
+			        efm_amt = #{efmAmt},
+			        first_date = #{firstDate},
+			        first_time = #{firstTime},
+			        frxc_ldgr_stcd = #{frxcLdgrStcd},
+			        intd_rscd = #{intdRscd},
+			        last_date = #{lastDate},
+			        last_time = #{lastTime},
+			        ntnt_ntcd = #{ntntNtcd},
+			        pmny_amt = #{pmnyAmt},
+			        pmny_apl_exrt = #{pmnyAplExrt},
+			        pmny_dln_pl_wna = #{pmnyDlnPlWna},
+			        pmny_exrt = #{pmnyExrt},
+			        pmny_stlm_wna = #{pmnyStlmWna},
+			        prm_rt = #{prmRt},
+			        psp_no = #{pspNo},
+			        rcfm_dt = #{rcfmDt},
+			        sum_stlm_wna = #{sumStlmWna},
+			        tr_mnbd_pccd = #{trMnbdPccd},
+			        tusa_tnsl_amt = #{tusaTnslAmt},
+			        us_ntcd = #{usNtcd},
+			        wn_itrlk_act = #{wnItrlkAct},
+			        wn_itrlk_amt = #{wnItrlkAmt}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+			        ref_no,
+			        efm_dscd,
+			        tr_dt,
+			        rnno,
+			        rnno_dscd,
+			        alt_wna,
+			        amty_dscd,
+			        brno,
+			        cash_wna,
+			        cn_amt,
+			        cn_apl_exrt,
+			        cn_dln_pl_wna,
+			        cn_exrt,
+			        cn_stlm_wna,
+			        crc_cncl_dt,
+			        crc_cncl_nm,
+			        crcd,
+			        cust_nm,
+			        cust_no,
+			        efm_amt,
+			        first_date,
+			        first_time,
+			        frxc_ldgr_stcd,
+			        intd_rscd,
+			        last_date,
+			        last_time,
+			        ntnt_ntcd,
+			        pmny_amt,
+			        pmny_apl_exrt,
+			        pmny_dln_pl_wna,
+			        pmny_exrt,
+			        pmny_stlm_wna,
+			        prm_rt,
+			        psp_no,
+			        rcfm_dt,
+			        sum_stlm_wna,
+			        tr_mnbd_pccd,
+			        tusa_tnsl_amt,
+			        us_ntcd,
+			        wn_itrlk_act,
+			        wn_itrlk_amt 			       
+			        )
+			        VALUES(
+				        #{refNo},
+				        #{efmDscd},
+				        #{trDt},
+				        #{rnno},
+				        #{rnnoDscd},
+				        #{altWna},
+				        #{amtyDscd},
+				        #{brno},
+				        #{cashWna},
+				        #{cnAmt},
+				        #{cnAplExrt},
+				        #{cnDlnPlWna},
+				        #{cnExrt},
+				        #{cnStlmWna},
+				        #{crcCnclDt},
+				        #{crcCnclNm},
+				        #{crcd},
+				        #{custNm},
+				        #{custNo},
+				        #{efmAmt},
+				        #{firstDate},
+				        #{firstTime},
+				        #{frxcLdgrStcd},
+				        #{intdRscd},
+				        #{lastDate},
+				        #{lastTime},
+				        #{ntntNtcd},
+				        #{pmnyAmt},
+				        #{pmnyAplExrt},
+				        #{pmnyDlnPlWna},
+				        #{pmnyExrt},
+				        #{pmnyStlmWna},
+				        #{prmRt},
+				        #{pspNo},
+				        #{rcfmDt},
+				        #{sumStlmWna},
+				        #{trMnbdPccd},
+				        #{tusaTnslAmt},
+				        #{usNtcd},
+				        #{wnItrlkAct},
+				        #{wnItrlkAmt} 			        
+				    )
+	     </insert>
+	     
+	    <select id="exchangeSeq" resultType="Integer">
+			SELECT EXG_SQ.NEXTVAL FROM DUAL    
+	    </select>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.oaudit.OauditMapper">
+
+    <select id="findByOptions" resultType="Oaudit">
+    <![CDATA[
+         SELECT  oad_sendid
+				,oad_recvid
+				,oad_sendqual
+				,oad_recvqual
+				,oad_sender
+				,oad_rxer
+				,oad_iref
+				,oad_mref
+				,oad_gref
+				,oad_type
+				,oad_fref
+				,oad_rdate
+				,oad_rtime
+				,oad_tpcomid
+				,oad_mycomid
+				,oad_tdate
+				,oad_ttime
+				,oad_sdate
+				,oad_stime
+				,oad_status
+				,oad_sustype
+				,oad_worktype
+				,oad_ackdate
+				,oad_acktime
+				,oad_acktype
+				,oad_ackref
+				,oad_nobyte
+				,oad_aref
+				,oad_sessno oadsessno
+				,oad_dss
+				,oad_transref
+				,oad_filename
+				,oad_outfile
+		   FROM oaudit_t t
+          WHERE ((t.oad_rdate = #{startdate} AND t.oad_rtime     >= #{starttime} ) 
+             OR  (t.oad_rdate = #{enddate}   AND t.oad_rtime     <= #{endtime} ) 
+             OR  (t.oad_rdate > #{startdate} AND t.oad_rdate      < #{enddate} )) 
+            AND  (#{mycomid} is null          OR t.oad_mycomid LIKE '%' || #{mycomid} || '%' )
+            AND  (#{recvid} is null           OR t.oad_recvid  LIKE '%' || #{recvid} || '%' ) 
+            AND  (#{aref} is null             OR t.oad_aref    LIKE '%' || #{aref} || '%' ) 
+            AND  (#{type} is null             OR t.oad_type    LIKE '%' || #{type} || '%' ) 
+            AND  (#{fref} is null             OR t.oad_fref    LIKE '%' || #{fref} || '%' ) 
+            AND  (#{status} is null           OR t.oad_status     = #{status} ) 
+          ORDER BY t.oad_rdate, t.oad_rtime
+    ]]>
+    </select>
+
+</mapper>

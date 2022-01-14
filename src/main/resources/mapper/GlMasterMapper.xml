@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.accounting.GlMasterMapper">
+    <select id="searchListGlMaster" parameterType="java.util.Map"  resultType="GlMasterVo">
+    	select
+			glmaster0_.actg_tr_dt AS actgTrDt,
+			glmaster0_.actg_tr_srno AS actgTrSrno,
+			glmaster0_.bz_tcd AS bzTcd,
+			glmaster0_.org_actg_tr_dt AS orgActgTrDt,
+			glmaster0_.org_actg_tr_srno AS orgActgTrSrno,
+			glmaster0_.prc_tcd AS prcTcd,
+			glmaster0_.ref_no AS refNo,
+			glmaster0_.regi_dt AS regiDt,
+			glmaster0_.regi_tm AS regiTm,
+			glmaster0_.stat_tcd AS statTcd
+		FROM
+			ac_frc_gl_master glmaster0_
+		WHERE 1=1
+			<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+				and glmaster0_.actg_tr_dt BETWEEN #{startDate} AND #{endDate}
+			</if>		
+			<if test="refNo != null and refNo != ''">
+				 and glmaster0_.ref_no like '%'||#{refNo}||'%'
+			</if>		
+	</select>
+    <select id="findOneGlMaster" parameterType="java.util.Map"  resultType="GlMasterVo">
+    	select
+			glmaster0_.actg_tr_dt AS actgTrDt,
+			glmaster0_.actg_tr_srno AS actgTrSrno,
+			glmaster0_.bz_tcd AS bzTcd,
+			glmaster0_.org_actg_tr_dt AS orgActgTrDt,
+			glmaster0_.org_actg_tr_srno AS orgActgTrSrno,
+			glmaster0_.prc_tcd AS prcTcd,
+			glmaster0_.ref_no AS refNo,
+			glmaster0_.regi_dt AS regiDt,
+			glmaster0_.regi_tm AS regiTm,
+			glmaster0_.stat_tcd AS statTcd
+		FROM
+			ac_frc_gl_master glmaster0_
+		WHERE 1=1
+			AND glmaster0_.actg_tr_dt = #{actgTrDt}
+			AND glmaster0_.actg_tr_srno = #{actgTrSrno}
+	</select>
+    <select id="findOneRefNoAndStatTcd" parameterType="java.util.Map"  resultType="GlMasterVo">
+    	select
+			glmaster0_.actg_tr_dt AS actgTrDt,
+			glmaster0_.actg_tr_srno AS actgTrSrno,
+			glmaster0_.bz_tcd AS bzTcd,
+			glmaster0_.org_actg_tr_dt AS orgActgTrDt,
+			glmaster0_.org_actg_tr_srno AS orgActgTrSrno,
+			glmaster0_.prc_tcd AS prcTcd,
+			glmaster0_.ref_no AS refNo,
+			glmaster0_.regi_dt AS regiDt,
+			glmaster0_.regi_tm AS regiTm,
+			glmaster0_.stat_tcd AS statTcd
+		FROM
+			ac_frc_gl_master glmaster0_
+		WHERE 1=1
+			and glmaster0_.ref_no  = #{refNo}
+			and glmaster0_.stat_tcd =#{statTcd}
+	</select>
+    <select id="findTop1ByActgTrDtOrderByActgTrSrnoDesc" parameterType="java.util.Map"  resultType="GlMasterVo">
+    	select * from (
+	    	select
+				glmaster0_.actg_tr_dt AS actgTrDt,
+				glmaster0_.actg_tr_srno AS actgTrSrno,
+				glmaster0_.bz_tcd AS bzTcd,
+				glmaster0_.org_actg_tr_dt AS orgActgTrDt,
+				glmaster0_.org_actg_tr_srno AS orgActgTrSrno,
+				glmaster0_.prc_tcd AS prcTcd,
+				glmaster0_.ref_no AS refNo,
+				glmaster0_.regi_dt AS regiDt,
+				glmaster0_.regi_tm AS regiTm,
+				glmaster0_.stat_tcd AS statTcd
+			FROM
+				ac_frc_gl_master glmaster0_
+			WHERE 1=1
+				AND glmaster0_.actg_tr_dt = #{actgTrDt}
+			Order by 
+			 	glmaster0_.actg_tr_srno DESC
+    	)
+	    <![CDATA[ 
+	    where ROWNUM <= 1
+	    ]]>
+	</select>
+		
+	<insert id="saveGlMaster" >
+		MERGE INTO ac_frc_gl_master 
+            USING dual
+              ON (actg_tr_dt = #{actgTrDt} and  actg_tr_srno = #{actgTrSrno})   <!--  중복조건 --> 
+		    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+	        UPDATE SET 
+				bz_tcd  =  #{bzTcd},
+				org_actg_tr_dt  =  #{orgActgTrDt},
+				org_actg_tr_srno  =  #{orgActgTrSrno},
+				prc_tcd  =  #{prcTcd},
+				ref_no  =  #{refNo},
+				regi_dt  =  #{regiDt},
+				regi_tm  =  #{regiTm},
+				stat_tcd  =  #{statTcd}
+		    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+		    insert ( 
+					actg_tr_dt,
+					actg_tr_srno,
+					bz_tcd,
+					org_actg_tr_dt,
+					org_actg_tr_srno,
+					prc_tcd,
+					ref_no,
+					regi_dt,
+					regi_tm,
+					stat_tcd
+		        )
+		        VALUES(
+					#{actgTrDt},
+					#{actgTrSrno},
+					#{bzTcd},
+					#{orgActgTrDt},
+					#{orgActgTrSrno},
+					#{prcTcd},
+					#{refNo},
+					#{regiDt},
+					#{regiTm},
+					#{statTcd}
+			    )
+     </insert>
+</mapper>

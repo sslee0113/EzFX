@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                        <pattern>%d{MM/dd HH:mm:ss} %level - %C{0} %M %L | %message %n</pattern>
+                </encoder>
+	</appender>
+
+
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+                <file>c:/temp/ezfx.log</file>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                          <fileNamePattern>ezfx.log.%d{yyyy-MM-dd}</fileNamePattern>
+                          <maxHistory>2</maxHistory>
+                          <totalSizeCap>3GB</totalSizeCap>
+                 </rollingPolicy>
+
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                        <pattern>%d{MM/dd HH:mm:ss} %level - %C{0} %M %L | %message %n</pattern>
+                </encoder>
+
+        </appender>
+
+        <logger name="com.sennet" level="info" ref="FILE" />
+        <logger name="com.sennet" level="info" ref="STDOUT" />
+
+        <root level="info">
+                <appender-ref ref="FILE" />
+                <appender-ref ref="STDOUT" />
+        </root>
+
+</configuration>

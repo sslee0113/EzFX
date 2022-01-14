@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.CountryMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListCountry" parameterType="java.util.Map"  resultType="CountryVo">
+			 select
+			        country_.ctry_code ctryCode,
+					country_.eng_name as engName,
+					country_.kor_name as korName,
+					country_.curr_code as currCode,
+					country_.oecd_join_flag as oecdJoinFlag,
+					country_.ctnt_type as ctntType,
+					country_.g8_join_flag as g8JoinFlag,
+					country_.sta_cd as staCd,
+					
+					country_.first_date as firstDate,
+					country_.first_time as firstTime,
+					country_.last_date as lastDate,
+					country_.last_time as lastTime
+			    from
+			        cm_country_code country_
+			    where 1 = 1
+			    	and sta_cd = '0' 
+				<if test="ctryCode != null and ctryCode != ''">
+					and country_.ctry_code like '%'||#{ctryCode}||'%'
+				</if>	
+		</select>
+		
+		<select id="ctryCodeList" parameterType="java.util.Map"  resultType="CountryVo">
+			 select
+			        country_.ctry_code ctryCode,
+					country_.eng_name as engName,
+					country_.kor_name as korName,
+					country_.curr_code as currCode,
+					country_.oecd_join_flag as oecdJoinFlag,
+					country_.ctnt_type as ctntType,
+					country_.g8_join_flag as g8JoinFlag,
+					country_.sta_cd as staCd,
+					
+					country_.first_date as firstDate,
+					country_.first_time as firstTime,
+					country_.last_date as lastDate,
+					country_.last_time as lastTime
+			    from
+			        cm_country_code country_
+			    where 1 = 1 
+					and country_.sta_cd = #{staCd}
+		</select>
+		
+	    <select id="findOneCountry" parameterType="String"  resultType="CountryVo">
+			 select
+			        country_.ctry_code ctryCode,
+					country_.eng_name as engName,
+					country_.kor_name as korName,
+					country_.curr_code as currCode,
+					country_.oecd_join_flag as oecdJoinFlag,
+					country_.ctnt_type as ctntType,
+					country_.g8_join_flag as g8JoinFlag,
+					country_.sta_cd as staCd,
+					
+					country_.first_date as firstDate,
+					country_.first_time as firstTime,
+					country_.last_date as lastDate,
+					country_.last_time as lastTime
+			    from
+			        cm_country_code country_
+			    where 1 = 1
+			    	and country_.ctry_code = #{ctryCode}
+			</select>
+		
+		<insert id="saveCountry" >
+			MERGE INTO cm_country_code 
+	            USING dual 
+	            ON (ctry_code = #{ctryCode})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        eng_name		= #{engName}
+			        ,kor_name		= #{korName}
+			        ,curr_code		= #{currCode}
+			        ,oecd_join_flag	= #{oecdJoinFlag}
+			        ,ctnt_type		= #{ctntType}
+			        ,g8_join_flag	= #{g8JoinFlag}
+			        ,sta_cd			= #{staCd}
+					,first_date		= #{firstDate}
+					,first_time		= #{firstTime}
+					,last_date		= #{lastDate}
+					,last_time		= #{lastTime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+				        ctry_code
+				        ,eng_name
+				        ,kor_name
+				        ,curr_code
+				        ,oecd_join_flag
+				        ,ctnt_type
+				        ,g8_join_flag
+				        ,sta_cd
+				        ,first_date
+				        ,first_time
+				        ,last_date
+				        ,last_time
+			        )
+			        VALUES(
+			        #{ctryCode}
+					,#{engName}
+					,#{korName}
+					,#{currCode}
+					,#{oecdJoinFlag}
+					,#{ctntType}
+					,#{g8JoinFlag}
+					,#{staCd}
+					,#{firstDate}
+					,#{firstTime}
+					,#{lastDate}
+					,#{lastTime} 
+			        )
+	     </insert>
+</mapper>

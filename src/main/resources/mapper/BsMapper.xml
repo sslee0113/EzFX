@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.accounting.bs.BsMapper">
+
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+
+    <select id="searchListBs" parameterType="BsVo" resultType="BsResponseVo">
+    <![CDATA[
+		SELECT 
+			AAA.ACSJ_CD acsjCd, 
+			REPLACE(AAA.ACSJ_OPUT_NM, ' ', '&nbsp;&nbsp;') acsjOputNm, 
+			AAA.CURR_CD currCd, 
+			AAA.FRC frc, 
+			AAA.WON won, 
+			(ROUND(AAA.FRC*BBB.USD_CROS_RATE,2)) usdCros, 
+			AAA.QRY_SQN qrySqn
+		  FROM 
+			(
+				SELECT AA.ACSJ_CD, AA.ACSJ_OPUT_NM, BB.CURR_CD, BB.FRC, BB.WON, AA.QRY_SQN
+				  FROM 
+					AC_FRC_GL_CODE AA, 
+					(SELECT 
+						A.ACSJ_CD , 
+						A.ACSJ_OPUT_NM , 
+						B.CURR_CD ,
+						SUM(CASE WHEN A.AST_DBT_TCD = '1' 
+								THEN B.DYBF_FRC_BALA + B.POSI_DR_FRC + B.ALT_DR_FRC - B.POSI_CR_FRC - B.ALT_CR_FRC - B.CNCL_POSI_DR_FRC - B.CNCL_ALT_DR_FRC + B.CNCL_POSI_CR_FRC + B.CNCL_ALT_CR_FRC
+							 WHEN A.AST_DBT_TCD = '2' 
+								THEN B.DYBF_FRC_BALA - B.POSI_DR_FRC - B.ALT_DR_FRC + B.POSI_CR_FRC + B.ALT_CR_FRC + B.CNCL_POSI_DR_FRC + B.CNCL_ALT_DR_FRC - B.CNCL_POSI_CR_FRC - B.CNCL_ALT_CR_FRC
+							  END ) FRC  ,
+						SUM(CASE WHEN A.AST_DBT_TCD = '1' 
+								THEN B.DYBF_WON_BALA + B.POSI_DR_WON + B.ALT_DR_WON - B.POSI_CR_WON - B.ALT_CR_WON - B.CNCL_POSI_DR_WON - B.CNCL_ALT_DR_WON + B.CNCL_POSI_CR_WON + B.CNCL_ALT_CR_WON
+							 WHEN A.AST_DBT_TCD IN ('2', '3')
+								THEN B.DYBF_WON_BALA - B.POSI_DR_WON - B.ALT_DR_WON + B.POSI_CR_WON + B.ALT_CR_WON + B.CNCL_POSI_DR_WON + B.CNCL_ALT_DR_WON - B.CNCL_POSI_CR_WON - B.CNCL_ALT_CR_WON
+							  END ) WON 
+					 FROM 
+						AC_FRC_GL_CODE A, 
+						AC_FRC_BS_MASTER B
+					WHERE A.ACSJ_CD = B.ACSJ_CD(+)
+					  AND B.ACTG_TR_DT = #{actgTrDt}
+	]]>	
+					<if test="brno != null and brno != ''">
+					  AND B.BRNO(+) = #{brno}
+					</if>
+    <![CDATA[
+					  AND A.ACSJ_CD NOT IN ('18101000', '19101000', '28101000', '29101000')
+					GROUP BY A.ACSJ_CD, A.ACSJ_OPUT_NM, B.CURR_CD
+					) BB
+				 WHERE AA.ACSJ_CD = BB.ACSJ_CD(+)
+				   AND AA.QRY_YN = 'Y'
+				   AND AA.ACSJ_CD NOT IN ('18101000', '19101000', '28101000', '29101000')
+
+				UNION ALL
+			
+				SELECT 
+					CASE WHEN BB.FRC < 0 THEN ('1'||SUBSTR(AA.ACSJ_CD, 2)) ELSE AA.ACSJ_CD END ACSJ_CD,
+					AA.ACSJ_OPUT_NM, 
+					BB.CURR_CD, 
+					CASE WHEN BB.FRC < 0 THEN BB.FRC * -1 ELSE BB.FRC END FRC, 
+					CASE WHEN BB.WON < 0 THEN BB.WON * -1 ELSE BB.WON END WON,
+					CASE WHEN BB.FRC < 0 THEN (SELECT QRY_SQN FROM AC_FRC_GL_CODE WHERE ACSJ_CD = ('1'||SUBSTR(AA.ACSJ_CD, 2))) ELSE AA.QRY_SQN END QRY_SQN
+				  FROM 
+					AC_FRC_GL_CODE AA, 
+					(SELECT 
+						A.ACSJ_CD , 
+						A.ACSJ_OPUT_NM , 
+						B.CURR_CD ,
+						SUM(CASE WHEN A.AST_DBT_TCD = '1' 
+								THEN (B.DYBF_FRC_BALA + B.POSI_DR_FRC + B.ALT_DR_FRC - B.POSI_CR_FRC - B.ALT_CR_FRC - B.CNCL_POSI_DR_FRC - B.CNCL_ALT_DR_FRC + B.CNCL_POSI_CR_FRC + B.CNCL_ALT_CR_FRC)*-1
+							 WHEN A.AST_DBT_TCD = '2' 
+								THEN B.DYBF_FRC_BALA - B.POSI_DR_FRC - B.ALT_DR_FRC + B.POSI_CR_FRC + B.ALT_CR_FRC + B.CNCL_POSI_DR_FRC + B.CNCL_ALT_DR_FRC - B.CNCL_POSI_CR_FRC - B.CNCL_ALT_CR_FRC
+							  END ) FRC  ,
+						SUM(CASE WHEN A.AST_DBT_TCD = '1' 
+								THEN (B.DYBF_WON_BALA + B.POSI_DR_WON + B.ALT_DR_WON - B.POSI_CR_WON - B.ALT_CR_WON - B.CNCL_POSI_DR_WON - B.CNCL_ALT_DR_WON + B.CNCL_POSI_CR_WON + B.CNCL_ALT_CR_WON)*-1
+							 WHEN A.AST_DBT_TCD = '2' 
+								THEN B.DYBF_WON_BALA - B.POSI_DR_WON - B.ALT_DR_WON + B.POSI_CR_WON + B.ALT_CR_WON + B.CNCL_POSI_DR_WON + B.CNCL_ALT_DR_WON - B.CNCL_POSI_CR_WON - B.CNCL_ALT_CR_WON
+							  END ) WON 
+					 FROM 
+						AC_FRC_GL_CODE A, 
+						AC_FRC_BS_MASTER B
+					WHERE A.ACSJ_CD = B.ACSJ_CD
+					  AND B.ACTG_TR_DT = #{actgTrDt}
+	]]>	
+					<if test="brno != null and brno != ''">
+					  AND B.BRNO(+) = #{brno}
+					</if>
+    <![CDATA[
+					  AND A.ACSJ_CD IN ('18101000', '19101000', '28101000', '29101000')
+					GROUP BY A.ACSJ_CD, A.ACSJ_OPUT_NM, B.CURR_CD
+					) BB
+				 WHERE AA.ACSJ_CD = BB.ACSJ_CD
+				 
+				UNION ALL
+			
+				SELECT 
+					AA.ACSJ_CD acsjCd,
+					AA.ACSJ_OPUT_NM acsjOputNm, 
+					'' currCd,
+					0 frc, 
+					0 won,
+					AA.QRY_SQN qrySqn
+				 FROM AC_FRC_GL_CODE AA
+				WHERE AA.ACSJ_CD IN ('18101000', '19101000', '28101000', '29101000')
+				  AND (SELECT COUNT(*) FROM AC_FRC_BS_MASTER WHERE ACTG_TR_DT = #{actgTrDt} AND ACSJ_CD IN ('18101000', '19101000', '28101000', '29101000')) = 0
+				
+			) AAA , 
+			(
+				SELECT * 
+				  FROM 
+					  CM_FRGN_EXCH_RATE 
+				 WHERE 
+					 VAL_DATE = #{actgTrDt}
+				   AND QUOT_SEQ = (SELECT MAX(QUOT_SEQ) FROM CM_FRGN_EXCH_RATE WHERE VAL_DATE = #{actgTrDt})
+			) BBB
+		 WHERE 
+			 AAA.CURR_CD = BBB.CURR_CODE(+)
+		 ORDER BY 
+			 CAST(QRY_SQN AS INT) ASC, CURRCD ASC
+	]]>	
+    </select>
+    <select id="findBsSumList" parameterType="BsVo" resultType="BsResponseSumVo">
+		SELECT 
+			AA.CURR_CD currCd, 
+			AA.DR dr, 
+			AA.CR cr, 
+			(AA.DR - AA.CR) sum
+		 FROM
+			(
+				SELECT 
+					CURR_CD, 
+					SUM(POSI_DR_FRC + ALT_DR_FRC - CNCL_POSI_DR_FRC - CNCL_ALT_DR_FRC) DR,
+					SUM(POSI_CR_FRC + ALT_CR_FRC - CNCL_POSI_CR_FRC - CNCL_ALT_CR_FRC) CR
+					
+				  FROM 
+					  AC_FRC_BS_MASTER A
+				 WHERE A.ACTG_TR_DT = #{actgTrDt}
+			<if test="brno != null and brno != ''">
+				   AND A.BRNO = #{brno}
+			</if>
+				 GROUP BY A.CURR_CD
+			) AA
+	</select>
+    <select id="findLastBs" parameterType="BsVo" resultType="BsResponseVo">
+    <![CDATA[
+		SELECT 
+			A.ACSJ_CD acsjCd, 
+			A.ACSJ_OPUT_NM acsjOputNm, 
+			B.CURR_CD currCd,
+			SUM(CASE WHEN A.AST_DBT_TCD = '1' 
+						THEN (B.DYBF_FRC_BALA + B.POSI_DR_FRC + B.ALT_DR_FRC - B.POSI_CR_FRC - B.ALT_CR_FRC - B.CNCL_POSI_DR_FRC - B.CNCL_ALT_DR_FRC + B.CNCL_POSI_CR_FRC + B.CNCL_ALT_CR_FRC)
+					 WHEN A.AST_DBT_TCD = '2' 
+						THEN B.DYBF_FRC_BALA - B.POSI_DR_FRC - B.ALT_DR_FRC + B.POSI_CR_FRC + B.ALT_CR_FRC + B.CNCL_POSI_DR_FRC + B.CNCL_ALT_DR_FRC - B.CNCL_POSI_CR_FRC - B.CNCL_ALT_CR_FRC
+				  END ) frc ,
+			SUM(CASE WHEN A.AST_DBT_TCD = '1' 
+						THEN (B.DYBF_WON_BALA + B.POSI_DR_WON + B.ALT_DR_WON - B.POSI_CR_WON - B.ALT_CR_WON - B.CNCL_POSI_DR_WON - B.CNCL_ALT_DR_WON + B.CNCL_POSI_CR_WON + B.CNCL_ALT_CR_WON)
+					 WHEN A.AST_DBT_TCD = '2' 
+						THEN B.DYBF_WON_BALA - B.POSI_DR_WON - B.ALT_DR_WON + B.POSI_CR_WON + B.ALT_CR_WON + B.CNCL_POSI_DR_WON + B.CNCL_ALT_DR_WON - B.CNCL_POSI_CR_WON - B.CNCL_ALT_CR_WON
+				  END ) won ,
+			0 usdCros, 
+			0 qrySqn
+		  FROM 
+			AC_FRC_GL_CODE A, 
+			AC_FRC_BS_MASTER B
+		 WHERE A.ACSJ_CD = B.ACSJ_CD
+		   AND B.ACTG_TR_DT = (SELECT max(ACTG_TR_DT) FROM AC_FRC_BS_MASTER WHERE ACSJ_CD = #{acsjCd} AND CURR_CD = #{currCd} AND ACTG_TR_DT < #{actgTrDt})
+		   AND B.BRNO = #{brno}
+		   AND A.ACSJ_CD = #{acsjCd}
+		   AND B.CURR_CD = #{currCd}
+		 GROUP BY A.ACSJ_CD, A.ACSJ_OPUT_NM, B.CURR_CD
+	]]>	
+    </select>
+    
+    <select id="findOneBs" parameterType="java.util.Map"  resultType="BsVo">
+    		select 
+				bs0_.acsj_cd AS acsjCd,
+				bs0_.actg_tr_dt AS actgTrDt,
+				bs0_.brno AS brno,
+				bs0_.curr_cd AS currCd,
+				bs0_.alt_cr_cnt AS altCrCnt,
+				bs0_.alt_cr_frc AS altCrFrc,
+				bs0_.alt_cr_won AS altCrWon,
+				bs0_.alt_dr_cnt AS altDrCnt,
+				bs0_.alt_dr_frc AS altDrFrc,
+				bs0_.alt_dr_won AS altDrWon,
+				bs0_.cncl_alt_cr_cnt AS cnclAltCrCnt,
+				bs0_.cncl_alt_cr_frc AS cnclAltCrFrc,
+				bs0_.cncl_alt_cr_won AS cnclAltCrWon,
+				bs0_.cncl_alt_dr_cnt AS cnclAltDrCnt,
+				bs0_.cncl_alt_dr_frc AS cnclAltDrFrc,
+				bs0_.cncl_alt_dr_won AS cnclAltDrWon,
+				bs0_.cncl_posi_cr_cnt AS cnclPosiCrCnt,
+				bs0_.cncl_posi_cr_frc AS cnclPosiCrFrc,
+				bs0_.cncl_posi_cr_won AS cnclPosiCrWon,
+				bs0_.cncl_posi_dr_cnt AS cnclPosiDrCnt,
+				bs0_.cncl_posi_dr_frc AS cnclPosiDrFrc,
+				bs0_.cncl_posi_dr_won AS cnclPosiDrWon,
+				bs0_.dybf_frc_bala AS dybfFrcBala,
+				bs0_.dybf_won_bala AS dybfWonBala,
+				bs0_.posi_cr_cnt AS posiCrCnt,
+				bs0_.posi_cr_frc AS posiCrFrc,
+				bs0_.posi_cr_won AS posiCrWon,
+				bs0_.posi_dr_cnt AS posiDrCnt,
+				bs0_.posi_dr_frc AS posiDrFrc,
+				bs0_.posi_dr_won AS posiDrWon
+			FROM
+				ac_frc_bs_master bs0_
+			WHERE 1=1
+				AND bs0_.actg_tr_dt = #{actgTrDt}
+				AND bs0_.brno = #{brno}
+				AND bs0_.acsj_cd = #{acsjCd}
+				AND bs0_.curr_cd = #{currCd}
+	</select>    
+	
+		<insert id="insertBs" >
+			MERGE INTO ac_frc_bs_master 
+	            USING dual 
+	            ON (actg_tr_dt = #{actgTrDt} and  brno = #{brno} and  acsj_cd = #{acsjCd}  and  curr_cd = #{currCd} )   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+						alt_cr_cnt = #{altCrCnt},
+						alt_cr_frc = #{altCrFrc},
+						alt_cr_won = #{altCrWon},
+						alt_dr_cnt = #{altDrCnt},
+						alt_dr_frc = #{altDrFrc},
+						alt_dr_won = #{altDrWon},
+						cncl_alt_cr_cnt = #{cnclAltCrCnt},
+						cncl_alt_cr_frc = #{cnclAltCrFrc},
+						cncl_alt_cr_won = #{cnclAltCrWon},
+						cncl_alt_dr_cnt = #{cnclAltDrCnt},
+						cncl_alt_dr_frc = #{cnclAltDrFrc},
+						cncl_alt_dr_won = #{cnclAltDrWon},
+						cncl_posi_cr_cnt = #{cnclPosiCrCnt},
+						cncl_posi_cr_frc = #{cnclPosiCrFrc},
+						cncl_posi_cr_won = #{cnclPosiCrWon},
+						cncl_posi_dr_cnt = #{cnclPosiDrCnt},
+						cncl_posi_dr_frc = #{cnclPosiDrFrc},
+						cncl_posi_dr_won = #{cnclPosiDrWon},
+						dybf_frc_bala = #{dybfFrcBala},
+						dybf_won_bala = #{dybfWonBala},
+						posi_cr_cnt = #{posiCrCnt},
+						posi_cr_frc = #{posiCrFrc},
+						posi_cr_won = #{posiCrWon},
+						posi_dr_cnt = #{posiDrCnt},
+						posi_dr_frc = #{posiDrFrc},
+						posi_dr_won = #{posiDrWon}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+		        INSERT(
+						acsj_cd,
+						actg_tr_dt,
+						brno,
+						curr_cd,
+						alt_cr_cnt,
+						alt_cr_frc,
+						alt_cr_won,
+						alt_dr_cnt,
+						alt_dr_frc,
+						alt_dr_won,
+						cncl_alt_cr_cnt,
+						cncl_alt_cr_frc,
+						cncl_alt_cr_won,
+						cncl_alt_dr_cnt,
+						cncl_alt_dr_frc,
+						cncl_alt_dr_won,
+						cncl_posi_cr_cnt,
+						cncl_posi_cr_frc,
+						cncl_posi_cr_won  ,
+						cncl_posi_dr_cnt  ,
+						cncl_posi_dr_frc  ,
+						cncl_posi_dr_won  ,
+						dybf_frc_bala  ,
+						dybf_won_bala  ,
+						posi_cr_cnt  ,
+						posi_cr_frc  ,
+						posi_cr_won  ,
+						posi_dr_cnt  ,
+						posi_dr_frc  ,
+						posi_dr_won 
+			        )
+		        VALUES(
+	                    #{acsjCd},
+	                    #{actgTrDt},
+	                    #{brno},
+	                    #{currCd},
+	                    #{altCrCnt},
+	                    #{altCrFrc},
+	                    #{altCrWon},
+	                    #{altDrCnt},
+	                    #{altDrFrc},
+	                    #{altDrWon},
+	                    #{cnclAltCrCnt},
+	                    #{cnclAltCrFrc},
+	                    #{cnclAltCrWon},
+	                    #{cnclAltDrCnt},
+	                    #{cnclAltDrFrc},
+	                    #{cnclAltDrWon},
+	                    #{cnclPosiCrCnt},
+	                    #{cnclPosiCrFrc},
+	                    #{cnclPosiCrWon},
+	                    #{cnclPosiDrCnt},
+	                    #{cnclPosiDrFrc},
+	                    #{cnclPosiDrWon},
+	                    #{dybfFrcBala},
+	                    #{dybfWonBala},
+	                    #{posiCrCnt},
+	                    #{posiCrFrc},
+	                    #{posiCrWon},
+	                    #{posiDrCnt},
+	                    #{posiDrFrc},
+	                    #{posiDrWon}
+			        )
+	     </insert>	
+</mapper>

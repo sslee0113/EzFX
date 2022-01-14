@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.FrgnExchRateNoticeMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="findByValDateOrderByCurrCodeAsc" resultType="FrgnExchRateNoticeVo">
+			SELECT 
+				currency_.CURR_CODE currCode, 
+				currency_.TT_SPRD_RATE ttSprdRate, 
+				currency_.BASIC_SPRD_RATE basicSprdRate, 
+				currency_.COIN_SPRD_RATE coinSprdRate, 
+				0 midRate,
+				frgnExchRate_.QUOT_SEQ as quotSeq
+			FROM 
+			  	CM_FRGN_EXCH_RATE frgnExchRate_,
+			  	CM_CURRENCY_CODE currency_
+			WHERE 1 = 1
+				AND frgnExchRate_.VAL_DATE(+) = '${valDate}'
+				AND frgnExchRate_.CURR_CODE(+) = currency_.CURR_CODE
+				AND currency_.QUOT_FLAG = 'Y'
+				AND (frgnExchRate_.QUOT_SEQ = (SELECT max(QUOT_SEQ) FROM CM_FRGN_EXCH_RATE WHERE VAL_DATE = '${valDate}')
+				OR frgnExchRate_.QUOT_SEQ is null)
+    </select>
+</mapper>

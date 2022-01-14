@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.myset.MysetMapper">
+
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <insert id="save" parameterType="com.sennet.myset.Myset">
+        INSERT 
+          INTO myset_t(MYID,MYCOMID,TPCOMID,SENDID,SENDIDQUAL,APPSENDID,APPSENDIDQL,R_ROUTADDR,MY_RESVD) 
+	    VALUES (#{myid, jdbcType=VARCHAR},#{mycomid, jdbcType=VARCHAR},#{tpcomid, jdbcType=VARCHAR},#{sendid, jdbcType=VARCHAR},#{sendidqual, jdbcType=VARCHAR},#{appsendid, jdbcType=VARCHAR},#{appsendidql, jdbcType=VARCHAR},#{r_routaddr, jdbcType=VARCHAR},#{my_resvd, jdbcType=VARCHAR}) 
+    </insert>
+    
+    <update id="update" parameterType="com.sennet.myset.Myset">
+    	UPDATE myset_t
+    	   SET  MYCOMID = #{mycomid, jdbcType=VARCHAR}
+			   ,TPCOMID = #{tpcomid, jdbcType=VARCHAR}
+			   ,SENDID = #{sendid, jdbcType=VARCHAR}
+			   ,SENDIDQUAL = #{sendidqual, jdbcType=VARCHAR}
+			   ,APPSENDID = #{appsendid, jdbcType=VARCHAR}
+			   ,APPSENDIDQL = #{appsendidql, jdbcType=VARCHAR}
+			   ,R_ROUTADDR = #{r_routaddr, jdbcType=VARCHAR}
+			   ,MY_RESVD = #{my_resvd, jdbcType=VARCHAR}
+    	 WHERE MYID = #{myid, jdbcType=VARCHAR}
+    </update>
+    
+    <delete id="delete" parameterType="com.sennet.myset.Myset">
+        DELETE FROM myset_t WHERE myid = #{myid}
+    </delete>
+
+    <select id="findByMyid" resultType="Myset">
+        SELECT * FROM myset_t WHERE myid = #{myid}
+    </select>
+
+    <select id="findByOrderByMyidAsc" resultType="Myset">
+        SELECT * FROM myset_t ORDER BY myid
+    </select>
+
+    <select id="findByMyidStartingWithOrderByMyidAsc" resultType="Myset">
+        SELECT * FROM myset_t WHERE myid LIKE '${myid}%' ORDER BY myid
+    </select>
+
+</mapper>

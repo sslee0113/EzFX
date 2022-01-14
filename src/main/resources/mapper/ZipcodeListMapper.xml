@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.zipcode.ZipcodeMapper">
+
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+	
+	<select id="searchListZipcode" parameterType="java.util.Map" resultType="ZipcodeVo">
+	    select
+					zipcode_.ZIPCODE zipcode,
+					zipcode_.PROVINCE as province,
+					zipcode_.PROVINCE_ENG as provinceEng,
+					zipcode_.COUNTY as county,
+					zipcode_.COUNTY_ENG as countyEng,
+					zipcode_.TOWN as town,
+					zipcode_.TOWN_ENG as townEng,
+					zipcode_.ROAD_NAME_CD as roadNameCd,
+					zipcode_.ROAD_NAME as roadName,
+					zipcode_.ROAD_NAME_ENG as roadNameEng,
+					zipcode_.UNDERGROUND_YN as undergroundYn,
+					zipcode_.MAIN_BUILDING_NO as mainBuildingNo,
+					zipcode_.SUB_BUILDING_NO as subBuildingNo,
+					zipcode_.BUILDING_MGNT_NO as buildingMgntNo,
+					zipcode_.BULK_DELIVERY_NAME as bulkDeliveryName,
+					zipcode_.BUILDING_NAME as buildingName,
+					zipcode_.LAW_DONG_CODE as lawDongCode,
+					zipcode_.LAW_DONG_NAME as lawDongName,
+					zipcode_.LI_NAME as liName,
+					zipcode_.ADMIN_DONG_NAME as adminDongName,
+					zipcode_.MOUNTAIN_YN as mountainYn,
+					zipcode_.MAIN_LOT_NO as mainLotNo,
+					zipcode_.SERIAL_NO as serialNo,
+					zipcode_.SUB_LOT_NO as subLotNo,
+					zipcode_.OLD_ZIPCODE as oldZipcode,
+					zipcode_.ZIPCODE_SERIAL_NO as zipcodeSerialNo
+			    from
+			        cm_zipcode zipcode_
+			    where 1 = 1
+			    <![CDATA[
+			    and ROWNUM <= 100 
+				]]>
+				<if test="zipcode != null and zipcode != ''">
+				AND ZIPCODE like '${zipcode}%'
+				</if>
+				<if test="province != null and province != ''">
+				AND PROVINCE like '${province}%'
+				</if>
+				<if test="roadName != null and roadName != ''">
+				AND ROAD_NAME like '${roadName}%'
+				</if>
+				<if test="mainBuildingNo != null and mainBuildingNo != ''">
+				AND MAIN_BUILDING_NO like '${mainBuildingNo}%'
+				</if>
+		</select>
+		
+
+
+	<select id="searchListZipcodePageable" parameterType="java.util.Map" resultType="ZipcodeVo">
+				SELECT
+					*
+				FROM
+					(
+					SELECT
+						row_.*,
+						rownum rownum_
+					FROM
+						(
+						SELECT
+							count(zipcode0_.SUB_BUILDING_NO)over() totalCount,
+							zipcode0_.ZIPCODE zipcode,
+							zipcode0_.PROVINCE as province,
+							zipcode0_.PROVINCE_ENG as provinceEng,
+							zipcode0_.COUNTY as county,
+							zipcode0_.COUNTY_ENG as countyEng,
+							zipcode0_.TOWN as town,
+							zipcode0_.TOWN_ENG as townEng,
+							zipcode0_.ROAD_NAME_CD as roadNameCd,
+							zipcode0_.ROAD_NAME as roadName,
+							zipcode0_.ROAD_NAME_ENG as roadNameEng,
+							zipcode0_.UNDERGROUND_YN as undergroundYn,
+							zipcode0_.MAIN_BUILDING_NO as mainBuildingNo,
+							zipcode0_.SUB_BUILDING_NO as subBuildingNo,
+							zipcode0_.BUILDING_MGNT_NO as buildingMgntNo,
+							zipcode0_.BULK_DELIVERY_NAME as bulkDeliveryName,
+							zipcode0_.BUILDING_NAME as buildingName,
+							zipcode0_.LAW_DONG_CODE as lawDongCode,
+							zipcode0_.LAW_DONG_NAME as lawDongName,
+							zipcode0_.LI_NAME as liName,
+							zipcode0_.ADMIN_DONG_NAME as adminDongName,
+							zipcode0_.MOUNTAIN_YN as mountainYn,
+							zipcode0_.MAIN_LOT_NO as mainLotNo,
+							zipcode0_.SERIAL_NO as serialNo,
+							zipcode0_.SUB_LOT_NO as subLotNo,
+							zipcode0_.OLD_ZIPCODE as oldZipcode,
+							zipcode0_.ZIPCODE_SERIAL_NO as zipcodeSerialNo
+						FROM
+							cm_zipcode zipcode0_
+						WHERE 1=1
+							AND (zipcode0_.province LIKE '%'||#{province}||'%')
+							AND (zipcode0_.road_name LIKE '%'||#{roadName}||'%')
+						ORDER BY
+							zipcode0_.building_mgnt_no ASC,
+							zipcode0_.county ASC,
+							zipcode0_.road_name_cd ASC,
+							zipcode0_.main_building_no ASC,
+							zipcode0_.sub_building_no ASC ) row_
+					WHERE
+						<![CDATA[rownum <= #{end}]]> )
+				WHERE
+					<![CDATA[rownum_ > #{start}]]>
+	</select>
+			
+			
+
+    <select id="searchListZipcodePopupPageable" parameterType="java.util.Map" resultType="ZipcodeVo">
+	    		SELECT
+					*
+				FROM
+					(
+					SELECT
+						row_.*,
+						rownum rownum_
+					FROM
+						(
+					    <![CDATA[
+							SELECT
+								count(SUB_BUILDING_NO)over() totalCount,
+								ZIPCODE,
+								(PROVINCE || ' ' || COUNTY || ' ' || ROAD_NAME || ' ' || MAIN_BUILDING_NO || 
+								DECODE(SUB_BUILDING_NO, NULL, ''
+						                          		  ,0, ''
+					                            			, '-' || SUB_BUILDING_NO) || 
+					                            
+								DECODE(BUILDING_NAME, NULL, ' (' || LAW_DONG_NAME || ')' 
+					                          		  	  , ' (' || LAW_DONG_NAME || ', ' || BUILDING_NAME || ')')
+						
+						
+								|| '<br>' || PROVINCE || ' ' || COUNTY || ' ' || LAW_DONG_NAME || ' ' || MAIN_LOT_NO || 
+								DECODE(SUB_LOT_NO, NULL, ''
+					        	             		 ,0, ''
+					    	                   		   , '-' || SUB_LOT_NO) || 
+						
+								DECODE(BUILDING_NAME, NULL, ''
+					    	    		                  , ' (' || BUILDING_NAME || ')')
+						
+								) ADDR 
+							FROM 
+								CM_ZIPCODE
+							WHERE 1 = 1
+							]]>
+							<if test="zipcode != null and zipcode != ''">
+								AND ZIPCODE like '${zipcode}%'
+							</if>
+							<if test="province != null and province != ''">
+								AND PROVINCE like '${province}%'
+							</if>
+							<if test="roadName != null and roadName != ''">
+								AND ROAD_NAME like '${roadName}%'
+							</if>
+							<if test="mainBuildingNo != null and mainBuildingNo != ''">
+								AND MAIN_BUILDING_NO like '${mainBuildingNo}%'
+							</if>
+							ORDER BY
+								building_mgnt_no ASC,
+								county ASC,
+								road_name_cd ASC,
+								main_building_no ASC,
+								sub_building_no ASC ) row_
+					WHERE
+						<![CDATA[rownum <= #{end}]]> )
+				WHERE
+					<![CDATA[rownum_ > #{start}]]>
+							
+
+    </select>
+    
+    <select id="findOneZipcode" parameterType="String"  resultType="ZipcodeVo">
+		 select
+				zipcode_.ZIPCODE zipcode,
+				zipcode_.PROVINCE as province,
+				zipcode_.PROVINCE_ENG as provinceEng,
+				zipcode_.COUNTY as county,
+				zipcode_.COUNTY_ENG as countyEng,
+				zipcode_.TOWN as town,
+				zipcode_.TOWN_ENG as townEng,
+				zipcode_.ROAD_NAME_CD as roadNameCd,
+				zipcode_.ROAD_NAME as roadName,
+				zipcode_.ROAD_NAME_ENG as roadNameEng,
+				zipcode_.UNDERGROUND_YN as undergroundYn,
+				zipcode_.MAIN_BUILDING_NO as mainBuildingNo,
+				zipcode_.SUB_BUILDING_NO as subBuildingNo,
+				zipcode_.BUILDING_MGNT_NO as buildingMgntNo,
+				zipcode_.BULK_DELIVERY_NAME as bulkDeliveryName,
+				zipcode_.BUILDING_NAME as buildingName,
+				zipcode_.LAW_DONG_CODE as lawDongCode,
+				zipcode_.LAW_DONG_NAME as lawDongName,
+				zipcode_.LI_NAME as liName,
+				zipcode_.ADMIN_DONG_NAME as adminDongName,
+				zipcode_.MOUNTAIN_YN as mountainYn,
+				zipcode_.MAIN_LOT_NO as mainLotNo,
+				zipcode_.SERIAL_NO as serialNo,
+				zipcode_.SUB_LOT_NO as subLotNo,
+				zipcode_.OLD_ZIPCODE as oldZipcode,
+				zipcode_.ZIPCODE_SERIAL_NO as zipcodeSerialNo
+		    from
+		        cm_zipcode zipcode_
+		    where 1 = 1
+		    and zipcode_.BUILDING_MGNT_NO = #{buildingMgntNo}
+	</select>
+	 
+
+
+</mapper>

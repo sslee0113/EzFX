@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.CustomerMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListCustomer" parameterType="java.util.Map"  resultType="CustomerVo">
+			 select
+			        customer_.cif_no cifNo,
+					customer_.brn_no as brnNo,
+					customer_.resident_cd as residentCd,
+					customer_.resident_no as residentNo,
+					customer_.eng_first_name as engFirstName,
+					customer_.eng_last_name as engLastName,
+					customer_.kor_first_name as korFirstName,
+					customer_.kor_last_name as korLastName,
+					customer_.habitation_cd as habitationCd,
+					customer_.national_code as nationalCode,
+					customer_.tel_no as telNo,
+					customer_.cell_no as cellNo,
+					customer_.zip_code as zipCode,
+					customer_.addr1 as addr1,
+					customer_.addr2 as addr2,
+					customer_.or_cif_flag as orCifFlag,
+					customer_.or_eng_addr1 as orEngAddr1,
+					customer_.or_eng_addr2 as orEngAddr2,
+					customer_.or_eng_addr3 as orEngAddr3,
+					customer_.or_eng_addr4 as orEngAddr4,
+					customer_.sta_cd as staCd,
+					
+					customer_.first_date as firstDate,
+					customer_.first_time as firstTime,
+					customer_.last_date as lastDate,
+					customer_.last_time as lastTime
+			    from
+			        cm_customer customer_
+			    where sta_cd = '0' AND 1 = 1 
+				<if test="cifNo != null and cifNo != ''">
+					 and customer_.cif_no like '%'||#{cifNo}||'%'
+				</if>
+				<if test="brnNo != null and brnNo != ''">
+					 and customer_.brn_no like '%'||#{brnNo}||'%'
+				</if>
+				<if test="engFirstName != null and engFirstName != ''">
+					 and customer_.eng_first_name like '%'||#{engFirstName}||'%'
+				</if>
+		</select>
+	    <select id="findOneCustomer" parameterType="String"  resultType="CustomerVo">
+			 select
+			        customer_.cif_no cifNo,
+					customer_.brn_no as brnNo,
+					customer_.resident_cd as residentCd,
+					customer_.resident_no as residentNo,
+					customer_.eng_first_name as engFirstName,
+					customer_.eng_last_name as engLastName,
+					customer_.kor_first_name as korFirstName,
+					customer_.kor_last_name as korLastName,
+					customer_.habitation_cd as habitationCd,
+					customer_.national_code as nationalCode,
+					customer_.tel_no as telNo,
+					customer_.cell_no as cellNo,
+					customer_.zip_code as zipCode,
+					customer_.addr1 as addr1,
+					customer_.addr2 as addr2,
+					customer_.or_cif_flag as orCifFlag,
+					customer_.or_eng_addr1 as orEngAddr1,
+					customer_.or_eng_addr2 as orEngAddr2,
+					customer_.or_eng_addr3 as orEngAddr3,
+					customer_.or_eng_addr4 as orEngAddr4,
+					customer_.sta_cd as staCd,
+					
+					customer_.first_date as firstDate,
+					customer_.first_time as firstTime,
+					customer_.last_date as lastDate,
+					customer_.last_time as lastTime
+			    from
+			        cm_customer customer_
+			    where 1 = 1
+			    and customer_.cif_no = #{cifNo}
+			</select>
+		
+		<insert id="saveCustomer" >
+			MERGE INTO cm_customer 
+	            USING dual 
+	            ON (cif_no = #{cifNo})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        brn_no			= #{brnNo}
+			        ,resident_cd	= #{residentCd}
+			        ,resident_no	= #{residentNo}
+			        ,eng_first_name	= #{engFirstName}
+			        ,eng_last_name	= #{engLastName}
+			        ,kor_first_name	= #{korFirstName}
+			        ,kor_last_name	= #{korLastName}
+					,habitation_cd	= #{habitationCd}
+					,national_code	= #{nationalCode}
+					,tel_no			= #{telNo}
+					,cell_no		= #{cellNo}
+					,zip_code		= #{zipCode}
+					,addr1			= #{addr1}
+					,addr2			= #{addr2}
+					,or_cif_flag	= #{orCifFlag}
+					,or_eng_addr1	= #{orEngAddr1}
+					,or_eng_addr2	= #{orEngAddr2}
+					,or_eng_addr3	= #{orEngAddr3}
+					,or_eng_addr4	= #{orEngAddr4}
+					,sta_cd			= #{staCd}
+					,first_date		= #{firstDate}
+					,first_time		= #{firstTime}
+					,last_date		= #{lastDate}
+					,last_time		= #{lastTime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+			        	cif_no
+				    	,brn_no
+						,resident_cd
+						,resident_no
+						,eng_first_name
+						,eng_last_name
+						,kor_first_name
+						,kor_last_name
+						,habitation_cd
+						,national_code
+						,tel_no
+						,cell_no
+						,zip_code
+						,addr1
+						,addr2
+						,or_cif_flag
+						,or_eng_addr1
+						,or_eng_addr2
+						,or_eng_addr3
+						,or_eng_addr4
+						,sta_cd
+						,first_date
+						,first_time
+						,last_date
+						,last_time
+			        )
+			        VALUES(
+			        #{cifNo}
+					,#{brnNo}
+					,#{residentCd}
+					,#{residentNo}
+					,#{engFirstName}
+					,#{engLastName}
+					,#{korFirstName}
+					,#{korLastName}
+					,#{habitationCd}
+					,#{nationalCode}
+					,#{telNo}
+					,#{cellNo}
+					,#{zipCode}
+					,#{addr1}
+					,#{addr2}
+					,#{orCifFlag}
+					,#{orEngAddr1}
+					,#{orEngAddr2}
+					,#{orEngAddr3}
+					,#{orEngAddr4}
+					,#{staCd}
+					,#{firstDate}
+					,#{firstTime}
+					,#{lastDate}
+					,#{lastTime} 
+			        )
+	     </insert>
+</mapper>

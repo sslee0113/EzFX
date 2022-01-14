@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.accounting.GlCodeMapper">
+    <select id="findOneGlCode" parameterType="java.util.Map"  resultType="GlCodeVo">
+    	select
+				glcode0_.acsj_cd AS acsjCd,
+				glcode0_.acsj_grp AS acsjGrp,
+				glcode0_.acsj_nm AS acsjNm,
+				glcode0_.acsj_oput_nm AS acsjOputNm,
+				glcode0_.ast_dbt_tcd AS astDbtTcd,
+				glcode0_.ast_dbt_yn AS astDbtYn,
+				glcode0_.bok_acsj_tcd AS bokAcsjTcd,
+				glcode0_.ev_sbj_tcd AS evSbjTcd,
+				glcode0_.host_acsj_cd AS hostAcsjCd,
+				glcode0_.last_date AS lastDate,
+				glcode0_.last_time AS lastTime,
+				glcode0_.last_user AS lastUser,
+				glcode0_.onln_tcd AS onlnTcd,
+				glcode0_.qry_sqn AS qrySqn,
+				glcode0_.qry_yn AS qryYn,
+				glcode0_.stat_tcd AS statTcd,
+				glcode0_.wn_fr_tcd AS wnFrTcd
+			FROM
+				ac_frc_gl_code glcode0_
+			WHERE
+				glcode0_.acsj_cd = #{acsjCd}
+	</select>
+    <select id="selectListGlCode" parameterType="java.util.Map"  resultType="GlCodeVo">
+    	select
+				glcode0_.acsj_cd AS acsjCd,
+				glcode0_.acsj_grp AS acsjGrp,
+				glcode0_.acsj_nm AS acsjNm,
+				glcode0_.acsj_oput_nm AS acsjOputNm,
+				glcode0_.ast_dbt_tcd AS astDbtTcd,
+				glcode0_.ast_dbt_yn AS astDbtYn,
+				glcode0_.bok_acsj_tcd AS bokAcsjTcd,
+				glcode0_.ev_sbj_tcd AS evSbjTcd,
+				glcode0_.host_acsj_cd AS hostAcsjCd,
+				glcode0_.last_date AS lastDate,
+				glcode0_.last_time AS lastTime,
+				glcode0_.last_user AS lastUser,
+				glcode0_.onln_tcd AS onlnTcd,
+				glcode0_.qry_sqn AS qrySqn,
+				glcode0_.qry_yn AS qryYn,
+				glcode0_.stat_tcd AS statTcd,
+				glcode0_.wn_fr_tcd AS wnFrTcd
+			FROM
+				ac_frc_gl_code glcode0_
+			WHERE 1=1
+				<if test="acsjCd != null and acsjCd != ''">
+					AND glcode0_.acsj_cd like '%'||#{acsjCd}||'%'
+				</if>
+				<if test="acsjNm != null and acsjNm != ''">
+					AND glcode0_.acsj_nm like '%'||#{acsjNm}||'%'
+				</if>
+	</select>
+	
+		
+	<insert id="saveGlCode" >
+		MERGE INTO ac_frc_gl_code 
+            USING dual
+              ON (acsj_cd = #{acsjCd})   <!--  중복조건 --> 
+		    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+	        UPDATE SET 
+				acsj_grp = #{acsjGrp},
+				acsj_nm = #{acsjNm},
+				acsj_oput_nm = #{acsjOputNm},
+				ast_dbt_tcd = #{astDbtTcd},
+				ast_dbt_yn = #{astDbtYn},
+				bok_acsj_tcd = #{bokAcsjTcd},
+				ev_sbj_tcd = #{evSbjTcd},
+				host_acsj_cd = #{hostAcsjCd},
+				last_date = #{lastDate},
+				last_time = #{lastTime},
+				last_user = #{lastUser},
+				onln_tcd = #{onlnTcd},
+				qry_sqn = #{qrySqn},
+				qry_yn = #{qryYn},
+				stat_tcd = #{statTcd},
+				wn_fr_tcd = #{wnFrTcd}
+		    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+		    insert ( 
+					acsj_cd,
+					acsj_grp,
+					acsj_nm,
+					acsj_oput_nm,
+					ast_dbt_tcd,
+					ast_dbt_yn,
+					bok_acsj_tcd,
+					ev_sbj_tcd,
+					host_acsj_cd,
+					last_date,
+					last_time,
+					last_user,
+					onln_tcd,
+					qry_sqn,
+					qry_yn,
+					stat_tcd,
+					wn_fr_tcd
+		        )
+		        VALUES(
+					#{acsjCd},
+	                #{acsjGrp},
+	                #{acsjNm},
+	                #{acsjOputNm},
+	                #{astDbtTcd},
+	                #{astDbtYn},
+	                #{bokAcsjTcd},
+	                #{evSbjTcd},
+	                #{hostAcsjCd},
+	                #{lastDate},
+	                #{lastTime},
+	                #{lastUser},
+	                #{onlnTcd},
+	                #{qrySqn},
+	                #{qryYn},
+	                #{statTcd},
+	                #{wnFrTcd}
+			    )
+     </insert>
+</mapper>

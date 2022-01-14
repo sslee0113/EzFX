@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.FeeMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListFee" parameterType="java.util.Map"  resultType="FeeVo">
+			 select 
+				    fee_.fee_cd as feeCd,
+				    dcode_.dcode_name as rmtKdcdName,
+				    fee_.rmt_kdcd as rmtKdcd,
+				    fee_.ntcd as ntcd,
+				    fee_.crcd as crcd,
+				    fee_.apl_strt_dt as aplStrtDt,
+				    fee_.apl_end_dt as aplEndDt,
+				    fee_.apl_strt_amt as aplStrtAmt,
+				    fee_.apl_end_amt as aplEndAmt,
+				    fee_.fee_crcd as feeCrcd,
+				    fee_.fee_amt as feeAmt,
+				    fee_.first_user_id as firstUserId,
+				    fee_.first_date as firstDate,
+				    fee_.first_time as firstTime,
+				    fee_.last_user_id as lastUserId,
+				    fee_.last_date as lastDate,
+				    fee_.last_time as lastTime
+			    from
+			        cm_remittance_fee fee_,
+			        cm_common_dcode dcode_ 
+			    where 1 = 1
+			    	 and fee_.rmt_kdcd = dcode_.dcode
+			   		 and dcode_.gcode = 'RMT_KDCD'
+			    <if test="rmtKdcd != null and rmtKdcd != ''">
+					 and fee_.rmt_kdcd = #{rmtKdcd}
+				</if>
+				<if test="ntcd != null and ntcd != ''">
+					 and fee_.ntcd = #{ntcd}
+				</if>
+				<if test="crcd != null and crcd != ''">
+					 and fee_.crcd = #{crcd}
+				</if> 
+				<if test="aplStrtDt != null and aplStrtDt != '' and aplEndDt != null and aplEndDt != ''">
+					 and fee_.apl_strt_dt BETWEEN #{aplStrtDt} AND #{aplEndDt}
+				</if>
+				<if test="aplStrtDt != null and aplStrtDt != '' and aplEndDt != null and aplEndDt != ''">
+					 and fee_.apl_end_dt BETWEEN #{aplStrtDt} AND #{aplEndDt}
+				</if>
+				<if test="aplStrtAmt != null and aplStrtAmt != '' and aplEndAmt != null and aplEndAmt != ''">
+					 and fee_.apl_strt_amt BETWEEN #{aplStrtAmt} AND #{aplEndAmt}
+				</if>
+				<if test="aplStrtAmt != null and aplStrtAmt != '' and aplEndAmt != null and aplEndAmt != ''">
+					 and fee_.apl_end_amt BETWEEN #{aplStrtAmt} AND #{aplEndAmt}
+				</if>
+		</select>
+		
+		<select id="findOneFee" parameterType="long"  resultType="FeeVo">
+			 select     
+				    fee_.fee_cd as feeCd,
+				    fee_.rmt_kdcd as rmtKdcd,
+				    fee_.ntcd as ntcd,
+				    fee_.crcd as crcd,
+				    fee_.apl_strt_dt as aplStrtDt,
+				    fee_.apl_end_dt as aplEndDt,
+				    fee_.apl_strt_amt as aplStrtAmt,
+				    fee_.apl_end_amt as aplEndAmt,
+				    fee_.fee_crcd as feeCrcd,
+				    fee_.fee_amt as feeAmt,
+				    fee_.first_user_id as firstUserId,
+				    fee_.first_date as firstDate,
+				    fee_.first_time as firstTime,
+				    fee_.last_user_id as lastUserId,
+				    fee_.last_date as lastDate,
+				    fee_.last_time as lastTime
+			    from
+			        cm_remittance_fee fee_
+			    where 1 = 1
+			    and fee_.fee_cd = #{feeCd}
+		</select>
+					
+		<select id="findByRmtKdcdAndNtcdAndCrcd" parameterType="java.util.Map"  resultType="FeeVo">
+			 select 
+				    fee_.fee_cd as feeCd,
+				    fee_.rmt_kdcd as rmtKdcd,
+				    fee_.ntcd as ntcd,
+				    fee_.crcd as crcd,
+				    fee_.apl_strt_dt as aplStrtDt,
+				    fee_.apl_end_dt as aplEndDt,
+				    fee_.apl_strt_amt as aplStrtAmt,
+				    fee_.apl_end_amt as aplEndAmt,
+				    fee_.fee_crcd as feeCrcd,
+				    fee_.fee_amt as feeAmt,
+				    fee_.first_user_id as firstUserId,
+				    fee_.first_date as firstDate,
+				    fee_.first_time as firstTime,
+				    fee_.last_user_id as lastUserId,
+				    fee_.last_date as lastDate,
+				    fee_.last_time as lastTime
+				from
+					cm_remittance_fee fee_
+				where 1 = 1
+				AND fee_.rmt_kdcd = #{rmtKdcd}
+				AND fee_.ntcd = #{ntcd}
+				AND fee_.crcd = #{crcd}
+				order by fee_.fee_cd asc
+		</select>
+			
+		<select id="findTop1ByOrderByFeeCdDesc" parameterType="java.util.Map"  resultType="FeeVo">
+			 select 
+				    fee_.fee_cd as feeCd,
+				    fee_.rmt_kdcd as rmtKdcd,
+				    fee_.ntcd as ntcd,
+				    fee_.crcd as crcd,
+				    fee_.apl_strt_dt as aplStrtDt,
+				    fee_.apl_end_dt as aplEndDt,
+				    fee_.apl_strt_amt as aplStrtAmt,
+				    fee_.apl_end_amt as aplEndAmt,
+				    fee_.fee_crcd as feeCrcd,
+				    fee_.fee_amt as feeAmt,
+				    fee_.first_user_id as firstUserId,
+				    fee_.first_date as firstDate,
+				    fee_.first_time as firstTime,
+				    fee_.last_user_id as lastUserId,
+				    fee_.last_date as lastDate,
+				    fee_.last_time as lastTime
+			    from
+			        cm_remittance_fee fee_
+		        where 1 = 1
+		        <![CDATA[
+		        AND rownum = 1
+		        ]]>
+		        order by fee_cd desc
+		</select>
+		
+		<select id="getFeeForAmt" parameterType="java.util.Map" resultType="FeeVo">
+				select 
+				    fee_.fee_cd as feeCd,
+				    fee_.rmt_kdcd as rmtKdcd,
+				    fee_.ntcd as ntcd,
+				    fee_.crcd as crcd,
+				    fee_.apl_strt_dt as aplStrtDt,
+				    fee_.apl_end_dt as aplEndDt,
+				    fee_.apl_strt_amt as aplStrtAmt,
+				    fee_.apl_end_amt as aplEndAmt,
+				    fee_.fee_crcd as feeCrcd,
+				    fee_.fee_amt as feeAmt,
+				    fee_.first_user_id as firstUserId,
+				    fee_.first_date as firstDate,
+				    fee_.first_time as firstTime,
+				    fee_.last_user_id as lastUserId,
+				    fee_.last_date as lastDate,
+				    fee_.last_time as lastTime
+			    from
+			        cm_remittance_fee fee_
+				where 1 = 1
+				and fee_.rmt_kdcd = #{rmtKdcd}
+				and fee_.ntcd = #{ntcd}
+				and fee_.crcd = #{crcd}
+				and #{today} between fee_.apl_strt_dt and fee_.apl_end_dt
+				and #{amt} between fee_.apl_strt_amt and fee_.apl_end_amt
+		</select>
+		
+		<insert id="saveFee" >
+			MERGE INTO cm_remittance_fee 
+	            USING dual 
+	            ON (fee_cd = #{feeCd})   <!--  중복조건 -->
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리-->
+			        UPDATE SET 
+			        rmt_kdcd		= #{rmtKdcd}
+			        ,ntcd			= #{ntcd}
+			        ,crcd			= #{crcd}
+			        ,apl_strt_dt	= #{aplStrtDt}
+			        ,apl_end_dt		= #{aplEndDt}
+			        ,apl_strt_amt	= #{aplStrtAmt}
+			        ,apl_end_amt	= #{aplEndAmt}
+			        ,fee_crcd		= #{feeCrcd}
+			        ,fee_amt		= #{feeAmt}
+			        ,first_user_id	= #{firstUserId}
+					,first_date		= #{firstDate}
+					,first_time		= #{firstTime}
+					,last_user_id	= #{lastUserId}
+					,last_date		= #{lastDate}
+					,last_time		= #{lastTime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+				        fee_cd
+						,rmt_kdcd
+						,ntcd
+						,crcd
+						,apl_strt_dt
+						,apl_end_dt
+						,apl_strt_amt
+						,apl_end_amt
+						,fee_crcd
+						,fee_amt
+						,first_user_id
+						,first_date
+						,first_time
+						,last_user_id
+						,last_date
+						,last_time
+			        )
+			        VALUES(
+			        #{feeCd}
+					,#{rmtKdcd}
+					,#{ntcd}
+					,#{crcd}
+					,#{aplStrtDt}
+					,#{aplEndDt}
+					,#{aplStrtAmt}
+					,#{aplEndAmt}
+					,#{feeCrcd}
+					,#{feeAmt}
+					,#{firstUserId}
+					,#{firstDate}
+					,#{firstTime}
+					,#{lastUserId}
+					,#{lastDate}
+					,#{lastTime} 
+			        )
+	     </insert>
+</mapper>

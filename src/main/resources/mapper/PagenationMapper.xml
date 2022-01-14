@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PagenationMapper">
+	<sql id="header">
+	SELECT   T.*
+  		FROM   (SELECT   ROWNUM AS RNUM, A.*
+            FROM   (
+	</sql>
+
+	<sql id="footer">
+			) A) T
+ 		WHERE   T.RNUM BETWEEN ( NVL(#{size}, 10) * NVL(#{page}, 1) ) - ( NVL(#{size},10)-1 ) AND (NVL(#{size}, 10) * NVL (#{page}, 1))
+	</sql>
+</mapper>

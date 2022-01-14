@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.RemittanceMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListRemittance" parameterType="java.util.Map"  resultType="RemittanceVo">
+				SELECT
+					remittance0_.ref_no    AS refNo,
+					remittance0_.adre_acno AS adreAcno,
+					remittance0_.adre_adr1 AS adreAdr1,
+					remittance0_.adre_adr2 AS adreAdr2,
+					remittance0_.adre_adr3 AS adreAdr3,
+					remittance0_.adre_amty_dscd AS adreAmtyDscd,
+					remittance0_.adre_cty AS adreCty,
+					remittance0_.adre_en_first_nm AS adreEnFirstNm,
+					remittance0_.adre_en_last_nm AS adreEnLastNm,
+					remittance0_.adre_ntcd AS adreNtcd,
+					remittance0_.adre_ntnt_ntcd AS adreNtntNtcd,
+					remittance0_.adre_rnno AS adreRnno,
+					remittance0_.adre_rnno_dscd AS adreRnnoDscd,
+					remittance0_.adre_state AS adreState,
+					remittance0_.adre_tlno AS adreTlno,
+					remittance0_.alt_wna AS altWna,
+					remittance0_.apl_exrt AS aplExrt,
+					remittance0_.basic_rate AS basicRate,
+					remittance0_.cash_wna AS cashWna,
+					remittance0_.clos_af_tr_yn AS closAfTrYn,
+					remittance0_.cnd_chg_dt AS cndChgDt,
+					remittance0_.crc_cncl_dt AS crcCnclDt,
+					remittance0_.crc_cncl_nm AS crcCnclNm,
+					remittance0_.crcd AS crcd,
+					remittance0_.dln_pl_wna AS dlnPlWna,
+					remittance0_.drwb_amt AS drwbAmt,
+					remittance0_.fee_amt AS feeAmt,
+					remittance0_.fee_amt_wna AS feeAmtWna,
+					remittance0_.fee_crcd AS feeCrcd,
+					remittance0_.first_date AS firstDate,
+					remittance0_.first_time AS firstTime,
+          			dcode_.dcode_name as frxcLdgrStcd,
+					remittance0_.frxc_ldgr_stcd,
+					remittance0_.hdy_tr_yn AS hdyTrYn,
+					remittance0_.last_date AS lastDate,
+					remittance0_.last_time AS lastTime,
+					remittance0_.owmn_amt AS owmnAmt,
+					remittance0_.prm_rt AS prmRt,
+					remittance0_.quot_seq AS quotSeq,
+					remittance0_.rcfm_dt AS rcfmDt,
+					remittance0_.rcvg_bnk_cd AS rcvgBnkCd,
+					remittance0_.rmpr_adr1 AS rmprAdr1,
+					remittance0_.rmpr_adr2 AS rmprAdr2,
+					remittance0_.rmpr_adr3 AS rmprAdr3,
+					remittance0_.rmpr_amty_dscd AS rmprAmtyDscd,
+					remittance0_.rmpr_cell_no AS rmprCellNo,
+					remittance0_.rmpr_cust_no AS rmprCustNo,
+					remittance0_.rmpr_en_first_nm AS rmprEnFirstNm,
+					remittance0_.rmpr_en_last_nm AS rmpr_en_lastNm,
+					remittance0_.rmpr_kr_first_nm AS rmprKrFirstNm,
+					remittance0_.rmpr_kr_last_nm AS rmprKrLastNm,
+					remittance0_.rmpr_ntnt_ntcd AS rmprNtntNtcd,
+					remittance0_.rmpr_psp_no AS rmprPspNo,
+					remittance0_.rmpr_rnno AS rmprRnno,
+					remittance0_.rmpr_rnno_dscd AS rmprRnnoDscd,
+					remittance0_.rmpr_sit_ntcd AS rmprSitNtcd,
+					remittance0_.rmpr_sit_zip AS rmprSitZip,
+					remittance0_.rmpr_tlno AS rmprTlno,
+					remittance0_.rmpr_tr_mnbd_pccd AS rmprTrMnbdPccd,
+					remittance0_.rmt_apc_dscd AS rmtApcDscd,
+          			dcode2_.dcode_name as rmtKdcd,
+					remittance0_.rmt_kdcd,
+					remittance0_.sndg_dt AS sndgDt,
+					remittance0_.tr_brno AS trBrno,
+					remittance0_.tr_dt AS trDt,
+					remittance0_.tusa_tnsl_amt AS tusaTnslAmt,
+					remittance0_.wn_itrlk_act AS wnItrlkAct,
+					remittance0_.wn_itrlk_amt AS wnItrlkAmt
+				FROM
+					rt_out_remittance remittance0_,
+          			cm_common_dcode dcode_,
+          			cm_common_dcode dcode2_
+				WHERE 1=1
+              		and remittance0_.frxc_ldgr_stcd = dcode_.dcode
+              		and remittance0_.rmt_kdcd = dcode2_.dcode
+             		and dcode_.gcode = 'PRC_TCD'
+             		and dcode2_.gcode = 'RMT_KDCD'
+					<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+					and remittance0_.tr_dt BETWEEN #{startDate} AND #{endDate}
+					</if>		
+					<if test="refNo != null and refNo != ''">
+					and remittance0_.ref_no like '%'||#{refNo}||'%'
+					</if>		
+					<if test="trBrno != null and trBrno != ''">
+					and remittance0_.tr_brno like '%'||#{trBrno}||'%'
+					</if>		
+					<if test="trDt != null and trDt != ''">
+					and remittance0_.tr_dt like '%'||#{trDt}||'%'
+					</if>		
+					<if test="crcd != null and crcd != ''">
+					and remittance0_.crcd like '%'||#{crcd}||'%'
+					</if>		
+					<if test="refNo != null and refNo != ''">
+					and remittance0_.ref_no like '%'||#{refNo}||'%'
+					</if>		
+					order by remittance0_.tr_dt asc, remittance0_.ref_no asc					
+		</select>
+		
+	    <select id="findOneRemittance" parameterType="String"  resultType="RemittanceVo">
+				SELECT
+					remittance0_.ref_no    AS refNo,
+					remittance0_.adre_acno AS adreAcno,
+					remittance0_.adre_adr1 AS adreAdr1,
+					remittance0_.adre_adr2 AS adreAdr2,
+					remittance0_.adre_adr3 AS adreAdr3,
+					remittance0_.adre_amty_dscd AS adreAmtyDscd,
+					remittance0_.adre_cty AS adreCty,
+					remittance0_.adre_en_first_nm AS adreEnFirstNm,
+					remittance0_.adre_en_last_nm AS adreEnLastNm,
+					remittance0_.adre_ntcd AS adreNtcd,
+					remittance0_.adre_ntnt_ntcd AS adreNtntNtcd,
+					remittance0_.adre_rnno AS adreRnno,
+					remittance0_.adre_rnno_dscd AS adreRnnoDscd,
+					remittance0_.adre_state AS adreState,
+					remittance0_.adre_tlno AS adreTlno,
+					remittance0_.alt_wna AS altWna,
+					remittance0_.apl_exrt AS aplExrt,
+					remittance0_.basic_rate AS basicRate,
+					remittance0_.cash_wna AS cashWna,
+					remittance0_.clos_af_tr_yn AS closAfTrYn,
+					remittance0_.cnd_chg_dt AS cndChgDt,
+					remittance0_.crc_cncl_dt AS crcCnclDt,
+					remittance0_.crc_cncl_nm AS crcCnclNm,
+					remittance0_.crcd AS crcd,
+					remittance0_.dln_pl_wna AS dlnPlWna,
+					remittance0_.drwb_amt AS drwbAmt,
+					remittance0_.fee_amt AS feeAmt,
+					remittance0_.fee_amt_wna AS feeAmtWna,
+					remittance0_.fee_crcd AS feeCrcd,
+					remittance0_.first_date AS firstDate,
+					remittance0_.first_time AS firstTime,
+					remittance0_.frxc_ldgr_stcd AS frxcLdgrStcd,
+					remittance0_.hdy_tr_yn AS hdyTrYn,
+					remittance0_.last_date AS lastDate,
+					remittance0_.last_time AS lastTime,
+					remittance0_.owmn_amt AS owmnAmt,
+					remittance0_.prm_rt AS prmRt,
+					remittance0_.quot_seq AS quotSeq,
+					remittance0_.rcfm_dt AS rcfmDt,
+					remittance0_.rcvg_bnk_cd AS rcvgBnkCd,
+					remittance0_.rmpr_adr1 AS rmprAdr1,
+					remittance0_.rmpr_adr2 AS rmprAdr2,
+					remittance0_.rmpr_adr3 AS rmprAdr3,
+					remittance0_.rmpr_amty_dscd AS rmprAmtyDscd,
+					remittance0_.rmpr_cell_no AS rmprCellNo,
+					remittance0_.rmpr_cust_no AS rmprCustNo,
+					remittance0_.rmpr_en_first_nm AS rmprEnFirstNm,
+					remittance0_.rmpr_en_last_nm AS rmprEnLastNm,
+					remittance0_.rmpr_kr_first_nm AS rmprKrFirstNm,
+					remittance0_.rmpr_kr_last_nm AS rmprKrLastNm,
+					remittance0_.rmpr_ntnt_ntcd AS rmprNtntNtcd,
+					remittance0_.rmpr_psp_no AS rmprPspNo,
+					remittance0_.rmpr_rnno AS rmprRnno,
+					remittance0_.rmpr_rnno_dscd AS rmprRnnoDscd,
+					remittance0_.rmpr_sit_ntcd AS rmprSitNtcd,
+					remittance0_.rmpr_sit_zip AS rmprSitZip,
+					remittance0_.rmpr_tlno AS rmprTlno,
+					remittance0_.rmpr_tr_mnbd_pccd AS rmprTrMnbdPccd,
+					remittance0_.rmt_apc_dscd AS rmtApcDscd,
+					remittance0_.rmt_kdcd AS rmtKdcd,
+					remittance0_.sndg_dt AS sndgDt,
+					remittance0_.tr_brno AS trBrno,
+					remittance0_.tr_dt AS trDt,
+					remittance0_.tusa_tnsl_amt AS tusaTnslAmt,
+					remittance0_.wn_itrlk_act AS wnItrlkAct,
+					remittance0_.wn_itrlk_amt AS wnItrlkAmt
+				FROM
+					rt_out_remittance remittance0_
+				WHERE 1=1
+					 and remittance0_.ref_no = #{refNo}
+		</select>
+		
+		<insert id="saveRemittance" parameterType="RemittanceVo" >
+			MERGE INTO rt_out_remittance 
+	            USING dual 
+	            ON (ref_no = #{refNo})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+					adre_acno = #{adreAcno},
+					adre_adr1 = #{adreAdr1},
+					adre_adr2 = #{adreAdr2},
+					adre_adr3 = #{adreAdr3},
+					adre_amty_dscd = #{adreAmtyDscd},
+					adre_cty = #{adreCty},
+					adre_en_first_nm = #{adreEnFirstNm},
+					adre_en_last_nm = #{adreEnLastNm},
+					adre_ntcd = #{adreNtcd},
+					adre_ntnt_ntcd = #{adreNtntNtcd},
+					adre_rnno = #{adreRnno},
+					adre_rnno_dscd = #{adreRnnoDscd},
+					adre_state = #{adreState},
+					adre_tlno = #{adreTlno},
+					alt_wna = #{altWna},
+					apl_exrt = #{aplExrt},
+					basic_rate = #{basicRate},
+					cash_wna = #{cashWna},
+					clos_af_tr_yn = #{closAfTrYn},
+					cnd_chg_dt = #{cndChgDt},
+					crc_cncl_dt = #{crcCnclDt},
+					crc_cncl_nm = #{crcCnclNm},
+					crcd = #{crcd},
+					dln_pl_wna = #{dlnPlWna},
+					drwb_amt = #{drwbAmt},
+					fee_amt = #{feeAmt},
+					fee_amt_wna = #{feeAmtWna},
+					fee_crcd = #{feeCrcd},
+					first_date = #{firstDate},
+					first_time = #{firstTime},
+					frxc_ldgr_stcd = #{frxcLdgrStcd},
+					hdy_tr_yn = #{hdyTrYn},
+					last_date = #{lastDate},
+					last_time = #{lastTime},
+					owmn_amt = #{owmnAmt},
+					prm_rt = #{prmRt},
+					quot_seq = #{quotSeq},
+					rcfm_dt = #{rcfmDt},
+					rcvg_bnk_cd = #{rcvgBnkCd},
+					rmpr_adr1 = #{rmprAdr1},
+					rmpr_adr2 = #{rmprAdr2},
+					rmpr_adr3 = #{rmprAdr3},
+					rmpr_amty_dscd = #{rmprAmtyDscd},
+					rmpr_cell_no = #{rmprCellNo},
+					rmpr_cust_no = #{rmprCustNo},
+					rmpr_en_first_nm = #{rmprEnFirstNm},
+					rmpr_en_last_nm = #{rmprEnLastNm},
+					rmpr_kr_first_nm = #{rmprKrFirstNm},
+					rmpr_kr_last_nm = #{rmprKrLastNm},
+					rmpr_ntnt_ntcd = #{rmprNtntNtcd},
+					rmpr_psp_no = #{rmprPspNo},
+					rmpr_rnno = #{rmprRnno},
+					rmpr_rnno_dscd = #{rmprRnnoDscd},
+					rmpr_sit_ntcd = #{rmprSitNtcd},
+					rmpr_sit_zip = #{rmprSitZip},
+					rmpr_tlno = #{rmprTlno},
+					rmpr_tr_mnbd_pccd = #{rmprTrMnbdPccd},
+					rmt_apc_dscd = #{rmtApcDscd},
+					rmt_kdcd = #{rmtKdcd},
+					sndg_dt = #{sndgDt},
+					tr_brno = #{trBrno},
+					tr_dt = #{trDt},
+					tusa_tnsl_amt = #{tusaTnslAmt},
+					wn_itrlk_act = #{wnItrlkAct},
+					wn_itrlk_amt = #{wnItrlkAmt}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+						ref_no ,
+						adre_acno ,
+						adre_adr1 ,
+						adre_adr2 ,
+						adre_adr3 ,
+						adre_amty_dscd ,
+						adre_cty ,
+						adre_en_first_nm ,
+						adre_en_last_nm ,
+						adre_ntcd ,
+						adre_ntnt_ntcd ,
+						adre_rnno ,
+						adre_rnno_dscd ,
+						adre_state ,
+						adre_tlno ,
+						alt_wna ,
+						apl_exrt ,
+						basic_rate ,
+						cash_wna ,
+						clos_af_tr_yn ,
+						cnd_chg_dt ,
+						crc_cncl_dt ,
+						crc_cncl_nm ,
+						crcd ,
+						dln_pl_wna ,
+						drwb_amt ,
+						fee_amt ,
+						fee_amt_wna ,
+						fee_crcd ,
+						first_date ,
+						first_time ,
+						frxc_ldgr_stcd ,
+						hdy_tr_yn ,
+						last_date ,
+						last_time ,
+						owmn_amt ,
+						prm_rt ,
+						quot_seq ,
+						rcfm_dt ,
+						rcvg_bnk_cd ,
+						rmpr_adr1 ,
+						rmpr_adr2 ,
+						rmpr_adr3 ,
+						rmpr_amty_dscd ,
+						rmpr_cell_no ,
+						rmpr_cust_no ,
+						rmpr_en_first_nm ,
+						rmpr_en_last_nm ,
+						rmpr_kr_first_nm ,
+						rmpr_kr_last_nm ,
+						rmpr_ntnt_ntcd ,
+						rmpr_psp_no ,
+						rmpr_rnno ,
+						rmpr_rnno_dscd ,
+						rmpr_sit_ntcd ,
+						rmpr_sit_zip ,
+						rmpr_tlno ,
+						rmpr_tr_mnbd_pccd ,
+						rmt_apc_dscd ,
+						rmt_kdcd ,
+						sndg_dt ,
+						tr_brno ,
+						tr_dt ,
+						tusa_tnsl_amt ,
+						wn_itrlk_act ,
+						wn_itrlk_amt  
+			        )
+			        VALUES(
+                        #{refNo},
+                        #{adreAcno},
+                        #{adreAdr1},
+                        #{adreAdr2},
+                        #{adreAdr3},
+                        #{adreAmtyDscd},
+                        #{adreCty},
+                        #{adreEnFirstNm},
+                        #{adreEnLastNm},
+                        #{adreNtcd},
+                        #{adreNtntNtcd},
+                        #{adreRnno},
+                        #{adreRnnoDscd},
+                        #{adreState},
+                        #{adreTlno},
+                        #{altWna},
+                        #{aplExrt},
+                        #{basicRate},
+                        #{cashWna},
+                        #{closAfTrYn},
+                        #{cndChgDt},
+                        #{crcCnclDt},
+                        #{crcCnclNm},
+                        #{crcd},
+                        #{dlnPlWna},
+                        #{drwbAmt},
+                        #{feeAmt},
+                        #{feeAmtWna},
+                        #{feeCrcd},
+                        #{firstDate},
+                        #{firstTime},
+                        #{frxcLdgrStcd},
+                        #{hdyTrYn},
+                        #{lastDate},
+                        #{lastTime},
+                        #{owmnAmt},
+                        #{prmRt},
+                        #{quotSeq},
+                        #{rcfmDt},
+                        #{rcvgBnkCd},
+                        #{rmprAdr1},
+                        #{rmprAdr2},
+                        #{rmprAdr3},
+                        #{rmprAmtyDscd},
+                        #{rmprCellNo},
+                        #{rmprCustNo},
+                        #{rmprEnFirstNm},
+                        #{rmprEnLastNm},
+                        #{rmprKrFirstNm},
+                        #{rmprKrLastNm},
+                        #{rmprNtntNtcd},
+                        #{rmprPspNo},
+                        #{rmprRnno},
+                        #{rmprRnnoDscd},
+                        #{rmprSitNtcd},
+                        #{rmprSitZip},
+                        #{rmprTlno},
+                        #{rmprTrMnbdPccd},
+                        #{rmtApcDscd},
+                        #{rmtKdcd},
+                        #{sndgDt},
+                        #{trBrno},
+                        #{trDt},
+                        #{tusaTnslAmt},
+                        #{wnItrlkAct},
+                        #{wnItrlkAmt}     
+				    )
+	     </insert>
+	    <select id="getRemittanceSeq" resultType="Integer">
+			SELECT RMT_SQ.NEXTVAL FROM DUAL    
+	    </select>
+	    
+	    <select id = "getRemittanceTotal" parameterType="java.util.Map"  resultType="RemittanceTotalVo">
+				SELECT
+					t.tr_Brno trBrno,
+					t.tr_dt trDt,
+					t.crcd crcd,
+					SUM(t.owmn_Amt) owmnAmt
+				FROM
+					rt_out_remittance t
+				WHERE 1 = 1
+					<if test="trBrno != null and trBrno != ''">
+						 and t.tr_brno = #{trBrno}
+					</if>		
+					<if test="trDt != null and trDt != ''">
+						and t.tr_Dt = #{trDt}
+					</if>		
+					<if test="crcd != null and crcd != ''">
+						 and t.crcd = #{crcd}
+					</if>		
+				GROUP BY
+					t.tr_Brno,
+					t.tr_Dt,
+					t.crcd
+				ORDER BY
+					t.tr_Dt,
+					t.crcd	    
+	    </select>
+	
+</mapper>

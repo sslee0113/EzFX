@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeAliases>
+    <!-- 필수 라이브러인 ezgatorconsoleclient-3.3.05.jar 내의 
+         com.sennet.oldmina.util.SessionLog 와 iBatis 의 SessionLog 가 서로 충돌을 일으켜
+         아래와 같이 개별 패키지 경로를 기입해야한다. 
+     -->
+        <package name="com.sennet.bizcommon.frgnexchratenotice"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="mapper/FrgnExchRateNoticeMapper.xml"/>
+    </mappers>
+</configuration>

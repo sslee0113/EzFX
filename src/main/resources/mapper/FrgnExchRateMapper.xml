@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.FrgnExchRateMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListFrgnExchRate" parameterType="java.util.Map"  resultType="FrgnExchRateVo">
+			 select
+			        frgnExchRate_.val_date valDate,
+					frgnExchRate_.curr_code as currCode,
+					frgnExchRate_.quot_seq as quotSeq,
+					frgnExchRate_.mid_rate as midRate,
+					frgnExchRate_.tt_sell_rate as ttSellRate,
+					frgnExchRate_.tt_buy_rate as ttBuyRate,
+					frgnExchRate_.cash_sell_rate as cashSellRate,
+					frgnExchRate_.cash_buy_rate as cashBuyRate,
+					frgnExchRate_.coin_sell_rate as coinSellRate,
+					frgnExchRate_.coin_buy_rate as coinBuyRate,
+					frgnExchRate_.usd_cros_rate as usdCrosRate,
+					frgnExchRate_.sta_cd as staCd,
+					
+					frgnExchRate_.first_date as firstDate,
+					frgnExchRate_.first_time as firstTime
+			    from
+			        cm_frgn_exch_rate frgnExchRate_
+			    where 1=1
+			    <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+					and frgnExchRate_.val_date BETWEEN #{startDate} AND #{endDate}
+				</if>
+				<if test="quotSeq != null and quotSeq != ''">
+					 and frgnExchRate_.quot_seq like '%'||#{quotSeq}||'%'
+				</if>
+		</select>
+	    <select id="findOneFrgnExchRate" parameterType="FrgnExchRateVo"  resultType="FrgnExchRateVo">
+			 select
+			        frgnExchRate_.val_date valDate,
+					frgnExchRate_.curr_code as currCode,
+					frgnExchRate_.quot_seq as quotSeq,
+					frgnExchRate_.mid_rate as midRate,
+					frgnExchRate_.tt_sell_rate as ttSellRate,
+					frgnExchRate_.tt_buy_rate as ttBuyRate,
+					frgnExchRate_.cash_sell_rate as cashSellRate,
+					frgnExchRate_.cash_buy_rate as cashBuyRate,
+					frgnExchRate_.coin_sell_rate as coinSellRate,
+					frgnExchRate_.coin_buy_rate as coinBuyRate,
+					frgnExchRate_.usd_cros_rate as usdCrosRate,
+					frgnExchRate_.sta_cd as staCd,
+					
+					frgnExchRate_.first_date as firstDate,
+					frgnExchRate_.first_time as firstTime
+			    from
+			        cm_frgn_exch_rate frgnExchRate_
+			    where 1 = 1
+			    and frgnExchRate_.val_date = #{valDate}
+			    and frgnExchRate_.curr_code = #{currCode}
+			    and frgnExchRate_.quot_seq = #{quotSeq}
+			</select>
+			
+		<select id="readMaxFrgnExchRateVo" parameterType="java.util.Map"  resultType="FrgnExchRateVo">
+			 SELECT
+				*
+				FROM
+				(
+				 select
+			        frgnExchRate_.val_date valDate,
+					frgnExchRate_.curr_code as currCode,
+					frgnExchRate_.quot_seq as quotSeq,
+					frgnExchRate_.mid_rate as midRate,
+					frgnExchRate_.tt_sell_rate as ttSellRate,
+					frgnExchRate_.tt_buy_rate as ttBuyRate,
+					frgnExchRate_.cash_sell_rate as cashSellRate,
+					frgnExchRate_.cash_buy_rate as cashBuyRate,
+					frgnExchRate_.coin_sell_rate as coinSellRate,
+					frgnExchRate_.coin_buy_rate as coinBuyRate,
+					frgnExchRate_.usd_cros_rate as usdCrosRate,
+					frgnExchRate_.sta_cd as staCd,
+					
+					frgnExchRate_.first_date as firstDate,
+					frgnExchRate_.first_time as firstTime
+			    	FROM
+						cm_frgn_exch_rate frgnExchRate_
+					WHERE 1 = 1
+						and	frgnExchRate_.curr_code = #{currCode}
+						and	frgnExchRate_.val_date = #{valDate}
+					ORDER BY
+						frgnExchRate_.quot_seq DESC )
+					WHERE 1 = 1
+					<![CDATA[
+						AND rownum <= 1
+					]]>
+		</select>
+			
+		<select id="getNextSeqFrgnExchRate" parameterType="String"  resultType="Integer">
+				select nvl(max(quot_seq)+1,1) from cm_frgn_exch_rate
+				where 1 = 1
+				and val_date=#{valDate}
+		</select>
+		
+		<insert id="saveFrgnExchRate" >
+			MERGE INTO cm_frgn_exch_rate 
+	            USING dual 
+	            ON (val_date = #{valDate} and curr_code = #{currCode} and quot_seq = #{quotSeq})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        mid_rate		= #{midRate}
+			        ,tt_sell_rate	= #{ttSellRate}
+			        ,tt_buy_rate	= #{ttBuyRate}
+			        ,cash_sell_rate	= #{cashSellRate}
+			        ,cash_buy_rate	= #{cashBuyRate}
+					,coin_sell_rate	= #{coinSellRate}
+					,coin_buy_rate	= #{coinBuyRate}
+					,usd_cros_rate	= #{usdCrosRate}
+					,sta_cd			= #{staCd}
+					,first_date		= #{firstDate}
+					,first_time		= #{firstTime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+			       		curr_code
+			        	,val_date
+						,quot_seq
+						,mid_rate
+						,tt_sell_rate
+						,tt_buy_rate
+						,cash_sell_rate
+						,cash_buy_rate
+						,coin_sell_rate
+						,coin_buy_rate
+						,usd_cros_rate
+						,sta_cd
+						,first_date
+						,first_time
+			        )
+			        VALUES(
+			        #{currCode}
+					,#{valDate}
+					,#{quotSeq}
+					,#{midRate}
+					,#{ttSellRate}
+					,#{ttBuyRate}
+					,#{cashSellRate}
+					,#{cashBuyRate}
+					,#{coinSellRate}
+					,#{coinBuyRate}
+					,#{usdCrosRate}
+					,#{staCd}
+					,#{firstDate}
+					,#{firstTime}
+			        )
+	     </insert>
+</mapper>

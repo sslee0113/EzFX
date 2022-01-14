@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.CommonCodeMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListCommonCode" parameterType="java.util.Map"  resultType="CommonCodeVo">
+			 select
+			        common_code_.gcode as gcode,
+			        common_code_.gcode_name as gcodeName,
+			        common_code_.sta_cd as staCd,
+			        
+			        common_code_.first_user_id as firstUserId,
+			        common_code_.first_datetime as firstDatetime,
+			        common_code_.last_user_id as lastUserId,
+			        common_code_.last_datetime as lastDatetime
+			    from
+			        cm_common_code common_code_  
+			    where 1 = 1   
+				<if test="gcode != null and gcode != ''">
+					 and common_code_.gcode like '%'||#{gcode}||'%'
+				</if>		
+				<if test="gcodeName != null and gcodeName != ''">
+					 and common_code_.gcode_name like '%'||#{gcodeName}||'%'
+				</if>		
+				<if test="staCd != null and staCd != ''">
+					 and common_code_.sta_cd = #{staCd}
+				</if>		
+		</select>
+	    <select id="findOneCommonCode" parameterType="String"  resultType="CommonCodeVo">
+			 select
+			        common_code_.gcode as gcode,
+			        common_code_.gcode_name as gcodeName,
+			        common_code_.sta_cd as staCd,
+			        common_code_.first_user_id as firstUserId,
+			        common_code_.first_datetime as firstDatetime,
+			        common_code_.last_user_id as lastUserId,
+			        common_code_.last_datetime as lastDatetime
+			    from
+			        cm_common_code common_code_  
+			    where 1 = 1
+			    and common_code_.gcode = #{gcode}
+		</select>
+		
+		<insert id="saveCommonCode" >
+			MERGE INTO cm_common_code 
+	            USING dual 
+	            ON (gcode = #{gcode})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        gcode_name     = #{gcodeName}
+			        ,sta_cd        = #{staCd}
+			        ,first_user_id = #{firstUserId}
+			        ,first_datetime= #{firstDatetime}
+			        ,last_user_id  = #{lastUserId}
+			        ,last_datetime = #{lastDatetime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+				        gcode
+				        ,gcode_name
+				        ,sta_cd       
+				        ,first_user_id
+				        ,first_datetime
+				        ,last_user_id
+				        ,last_datetime
+			        )
+			        VALUES(
+					 #{gcode}        
+					 ,#{gcodeName}        
+					 ,#{staCd}        
+					 ,#{firstUserId}  
+					 ,#{firstDatetime}
+					 ,#{lastUserId}   
+					 ,#{lastDatetime} 
+			        )
+	     </insert>
+</mapper>

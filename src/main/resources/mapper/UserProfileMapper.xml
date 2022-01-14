@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.userprofile.UserProfileMapper">
+
+    <select id="searchListUserProfile" parameterType="java.util.Map"  resultType="UserProfileVo">
+			SELECT
+				userprofile.account_seq AS accountSeq,
+				userprofile.badcount AS badCount,
+				userprofile.badcountdate AS badCountdate,
+				userprofile.brno AS brno,
+				userprofile.cell_no AS cellNo,
+				userprofile.finaldate AS finalDate,
+				userprofile.fullname AS fullName,
+				userprofile.modifydate AS modifyDate,
+				userprofile.offr_id AS offrId,
+				userprofile.password AS password,
+				userprofile.passworddate AS passwordDate,
+				userprofile.pos_cd AS posCd,
+				userprofile.role AS role,
+				userprofile.startdate AS startDate,
+				userprofile.super_user AS superUser,
+				userprofile.tel_no AS telNo,
+				userprofile.user_pos AS userPos,
+				userprofile.username AS userName,
+				userprofile.whiteip AS whiteIp
+			FROM
+				um_user_profile userprofile
+			WHERE 1 = 1
+				<if test="role != null and role != ''">
+					 and userprofile.role =#{role}
+				</if>		
+				<if test="userName != null and userName != ''">					 
+					and userprofile.username like '%'||#{userName}||'%'
+				</if>		
+			ORDER BY
+				account_seq ASC
+	</select>
+
+    <select id="findOneUserProfile" parameterType="java.util.Map"  resultType="UserProfileVo">
+			SELECT
+				userprofile.account_seq AS accountSeq,
+				userprofile.badcount AS badCount,
+				userprofile.badcountdate AS badCountdate,
+				userprofile.brno AS brno,
+				userprofile.cell_no AS cellNo,
+				userprofile.finaldate AS finalDate,
+				userprofile.fullname AS fullName,
+				userprofile.modifydate AS modifyDate,
+				userprofile.offr_id AS offrId,
+				userprofile.password AS password,
+				userprofile.passworddate AS passwordDate,
+				userprofile.pos_cd AS posCd,
+				userprofile.role AS role,
+				userprofile.startdate AS startDate,
+				userprofile.super_user AS superUser,
+				userprofile.tel_no AS telNo,
+				userprofile.user_pos AS userPos,
+				userprofile.username AS userName,
+				userprofile.whiteip AS whiteIp
+			FROM
+				um_user_profile userprofile
+			WHERE 1 = 1
+				<if test="userName != null and userName != ''">
+					 and userprofile.username = #{userName}
+				</if>
+				<if test="accountSeq != null">
+					 and userprofile.account_seq = #{accountSeq}
+				</if>
+	</select>
+		
+    <select id="getNextSeq"  resultType="Integer">
+		SELECT
+			NVL(MAX(account_seq),0)+ 1 AS nextSeq
+		FROM
+			UM_USER_PROFILE
+	</select>
+
+    <delete id="deleteUserProfile"  parameterType="java.util.Map">
+    	delete from um_user_profile
+    	where 1 = 1
+    	 and  account_seq = #{accountSeq}
+
+	</delete>		
+	 
+	<insert id="saveUserProfile" >
+		MERGE INTO um_user_profile 
+            USING dual 
+            ON (account_seq = #{accountSeq})   <!--  중복조건 --> 
+		    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+		        UPDATE SET 
+					brno           = #{brno},            
+					cell_no        = #{cellNo},          
+					finaldate      = #{finalDate},       
+					fullname       = #{fullName},        
+					modifydate     = #{modifyDate},      
+					offr_id        = #{offrId},          
+					password       = #{password},        
+					passworddate   = #{passwordDate},    
+					pos_cd         = #{posCd},           
+					role           = #{role},            
+					startdate      = #{startDate},       
+					super_user     = #{superUser},       
+					tel_no         = #{telNo},           
+					user_pos       = #{userPos},         
+					username       = #{userName},        
+					whiteip        = #{whiteIp}         
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+					INSERT (
+						account_seq,
+						badcount,
+						badcountdate,
+						brno,
+						cell_no,
+						finaldate,
+						fullname,
+						modifydate,
+						offr_id,
+						password,
+						passworddate,
+						pos_cd,
+						role,
+						startdate,
+						super_user,
+						tel_no,
+						user_pos,
+						username,
+						whiteip)
+					VALUES (
+		                 #{accountSeq},
+		                 #{badCount},
+		                 #{badCountdate},
+		                 #{brno},
+		                 #{cellNo},
+		                 #{finalDate},
+		                 #{fullName},
+		                 #{modifyDate},
+		                 #{offrId},
+		                 #{password},
+		                 #{passwordDate},
+		                 #{posCd},
+		                 #{role},
+		                 #{startDate},
+		                 #{superUser},
+		                 #{telNo},
+		                 #{userPos},
+		                 #{userName},
+		                 #{whiteIp})
+     </insert>
+     
+	<update id="updateBadCount" >
+				update um_user_profile   SET 
+					badcount     = #{badCount},            
+					badcountdate = #{badCountdate}            
+     </update>     
+     
+</mapper>

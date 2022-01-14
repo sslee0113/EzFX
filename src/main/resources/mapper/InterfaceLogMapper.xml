@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.InterfaceLogMapper">
+    <select id="searchListInterfaceLogPageable" parameterType="java.util.Map"  resultType="InterfaceLogVo">
+				SELECT
+					*
+				FROM
+					(
+					SELECT
+						row_.*,
+						rownum rownum_
+					FROM
+						(
+						SELECT
+							count(iflog0_.if_no)over() totalCount,
+							iflog0_.if_no AS ifNo,
+							iflog0_.sta_cd AS staCd,
+							iflog0_.biz_type AS bizType,
+							iflog0_.first_date AS firstDate,
+							iflog0_.first_time AS firstTime,
+							iflog0_.last_date AS lastDate,
+							iflog0_.last_time AS lastTime,
+							iflog0_.tr_date AS trDate,
+							iflog0_.tr_time AS trTime,
+							iflog0_.tr_yn AS trYn
+						FROM
+							cm_interface_log iflog0_
+						WHERE 1=1
+							<if test="bizType != null and bizType != ''">
+								AND iflog0_.biz_type = #{bizType}
+							</if>
+							<if test="staCd != null and staCd != ''">
+								AND iflog0_.sta_cd = #{staCd}
+							</if>
+							<if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+								AND iflog0_.tr_date BETWEEN #{startDate} AND #{endDate}
+							</if>		
+						ORDER BY
+							iflog0_.tr_date DESC,
+							iflog0_.tr_time DESC ) row_
+					WHERE
+						<![CDATA[rownum <= #{end}]]> )
+				WHERE
+					<![CDATA[rownum_ > #{start}]]>
+							
+	</select>
+		
+    <select id="findOneInterfaceLog" parameterType="java.util.Map"  resultType="InterfaceLogVo">
+			SELECT
+				iflog0_.if_no AS ifNo,
+				iflog0_.sta_cd AS staCd,
+				iflog0_.biz_type AS bizType,
+				iflog0_.first_date AS firstDate,
+				iflog0_.first_time AS firstTime,
+				iflog0_.last_date AS lastDate,
+				iflog0_.last_time AS lastTime,
+				iflog0_.tr_date AS trDate,
+				iflog0_.tr_time AS trTime,
+				iflog0_.tr_yn AS trYn
+			FROM
+				cm_interface_log iflog0_
+			WHERE 1=1
+			<if test="ifNo != null and ifNo != ''">
+				AND iflog0_.if_no = #{ifNo}
+			</if>
+			<if test="staCd != null and staCd != ''">
+				AND iflog0_.sta_cd = #{staCd}
+			</if>
+		</select>
+		
+		
+		<insert id="saveInterfaceLog" >
+			MERGE INTO cm_interface_log 
+	            USING dual 
+	            ON (if_no = #{ifNo} and  sta_cd = #{staCd})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+		        UPDATE SET 
+					biz_type =        #{bizType},   
+					first_date =      #{firstDate}, 
+					first_time =      #{firstTime}, 
+					last_date =       #{lastDate},  
+					last_time =       #{lastTime},  
+					tr_date =         #{trDate},    
+					tr_time =         #{trTime},    
+					tr_yn =           #{trYn}       
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			    insert ( 
+						if_no, 
+						sta_cd, 
+						biz_type, 
+						first_date, 
+						first_time, 
+						last_date, 
+						last_time, 
+						tr_date, 
+						tr_time, 
+						tr_yn
+			        )
+			        VALUES(
+						#{ifNo},
+						#{staCd},
+						#{bizType},
+						#{firstDate},
+						#{firstTime},
+						#{lastDate},
+						#{lastTime},
+						#{trDate},
+						#{trTime},
+						#{trYn}
+				    )
+	     </insert>
+</mapper>

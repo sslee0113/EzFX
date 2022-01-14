@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sennet.bizcommon.RoleMapper">
+	<!-- parameterType 에는 구문에 전달될 파라미터의 패키지 경로를 포함한 전체 클래명이나 별칭이 들어간다  -->
+    <select id="searchListRole" parameterType="java.util.Map"  resultType="TrRoleVo">
+				 SELECT
+				        CASE  WHEN  role_.MENU_ID  IS NULL 
+				              THEN  '' 
+				              ELSE  'true'
+				        END AS chk,
+				        menu_.menu_id as menuId,
+				        menu_.menu_url as menuUrl,
+				        menu_.menu_name as menuName,
+				        dcode_.dcode as dcode,
+				        dcode_.dcode_name as dcodeName,
+				        role_.first_user_id as firstUserId,
+				        role_.first_datetime as firstDatetime,
+				        role_.last_user_id as lastUserId,
+				        role_.last_datetime as lastDatetime
+				    from
+				        cm_menu_master menu_, 
+				        cm_role_detail role_ ,
+				        cm_common_dcode dcode_ 
+				    where 1 = 1   
+				    	AND menu_.menu_cd = dcode_.dcode
+				    	AND role_.menu_id(+) = menu_.MENU_ID
+				    	AND role_.role_cd(+) =#{roleCd}
+				    	AND dcode_.gcode='MENU_CD'
+					order  by dcode_.VIEW_SEQ asc,menu_.view_seq asc
+		</select>
+		
+		<insert id="saveRole" >
+			MERGE INTO cm_role_detail 
+	            USING dual 
+	            ON (role_cd = #{roleCd} and menu_id = #{menuId})   <!--  중복조건 --> 
+			    WHEN MATCHED THEN<!-- primary key가 중복될 경우 처리할 쿼리--> 
+			        UPDATE SET 
+			        first_user_id  = #{firstUserId},
+			        first_datetime = #{firstDatetime},
+			        last_user_id   = #{lastUserId},
+			        last_datetime  = #{lastDatetime}
+			    WHEN NOT MATCHED THEN <!-- primary key가 중복되지 않을 경우 처리할 쿼리-->
+			        INSERT(
+				        role_cd,
+				        menu_id,
+				        first_user_id,
+				        first_datetime,
+				        last_user_id,
+				        last_datetime
+			        )
+			        VALUES(
+					 #{roleCd},        
+					 #{menuId},        
+					 #{firstUserId},  
+					 #{firstDatetime},
+					 #{lastUserId},
+					 #{lastDatetime} 
+			        )
+	     </insert>
+	     
+	     <delete id="deleteRole" parameterType="String">
+	     	delete from cm_role_detail 
+	     	where 1=1
+	     	and   role_cd = #{roleCd} 
+	     </delete>
+</mapper>

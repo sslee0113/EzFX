@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="jdbcTypeForNull" value="NULL" />
+    </settings>
+    <typeAliases>
+    <!-- 필수 라이브 인 ezgatorconsoleclient-3.3.05.jar 내의 
+         com.sennet.oldmina.util.SessionLog 와 iBatis 의 SessionLog 가 서로 충돌을 일으켜
+         아래와 같이 개별 패키지 경로를 기입해야한다. 
+     -->
+        <package name="com.sennet.accounting.bs"/>
+        <package name="com.sennet.exchange"/>
+        <package name="com.sennet.remittance"/>
+        <package name="com.sennet.bizcommon.zipcode"/>
+        <package name="com.sennet.bizcommon.commoncode"/>
+        <package name="com.sennet.bizcommon.currency"/>
+        <package name="com.sennet.bizcommon.country"/>
+        <package name="com.sennet.bizcommon.customer"/>
+        <package name="com.sennet.bizcommon.branch"/>
+        <package name="com.sennet.bizcommon.frgnexchrate"/>
+        <package name="com.sennet.bizcommon.frgnexchratenotice"/>
+        <package name="com.sennet.bizcommon.commondcode"/>
+        <package name="com.sennet.bizcommon.iflog"/>
+        <package name="com.sennet.bizcommon.fee"/>
+        <package name="com.sennet.accounting"/>
+        <package name="com.sennet.bizcommon.menu"/>
+        <package name="com.sennet.bizcommon.role"/>
+        <package name="com.sennet.userprofile"/>
+        <package name="com.sennet.webaccesslog"/>
+        
+    </typeAliases>
+    <mappers>
+        <mapper resource="mapper/BsMapper.xml"/>
+        <mapper resource="mapper/ZipcodeListMapper.xml"/>
+        <mapper resource="mapper/ExchangeMapper.xml"/>
+        <mapper resource="mapper/RemittanceMapper.xml"/>
+        <mapper resource="mapper/CommonCodeMapper.xml"/>
+        <mapper resource="mapper/CurrencyMapper.xml"/>
+        <mapper resource="mapper/CountryMapper.xml"/>
+        <mapper resource="mapper/CustomerMapper.xml"/>
+        <mapper resource="mapper/BranchMapper.xml"/>
+		<mapper resource="mapper/FrgnExchRateMapper.xml"/>
+		<mapper resource="mapper/FrgnExchRateNoticeMapper.xml"/>
+		<mapper resource="mapper/FeeMapper.xml"/>
+
+        <mapper resource="mapper/CommonDcodeMapper.xml"/>
+        <mapper resource="mapper/InterfaceLogMapper.xml"/>
+        <mapper resource="mapper/PagenationMapper.xml"/>
+        <mapper resource="mapper/GlCodeMapper.xml"/>
+        <mapper resource="mapper/GlDetailMapper.xml"/>
+        <mapper resource="mapper/GlMasterMapper.xml"/>
+        <mapper resource="mapper/MenuMapper.xml"/>
+        <mapper resource="mapper/RoleMapper.xml"/>
+
+        <mapper resource="mapper/UserProfileMapper.xml"/>
+        <mapper resource="mapper/WebAccessLogMapper.xml"/>
+
+    </mappers>
+</configuration>
