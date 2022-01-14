@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AccountingPrcService {
 	
+	//test
 //	private final String position="포지션";
 	private final String POSITION="Y";
 	private final String POSITION_CD="29101000";
